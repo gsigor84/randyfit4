@@ -62,15 +62,6 @@ export default function Navbar() {
               Home
             </Link>
           </li>
-          <li className="border-b md:border-none">
-            <Link
-              href="/clients"
-              className="block px-4 py-2 md:py-0 hover:text-gray-600 transition"
-              onClick={() => setIsMenuOpen(false)} // Close menu on click
-            >
-              Clients
-            </Link>
-          </li>
           <li>
             <Link
               href="/add-client"
