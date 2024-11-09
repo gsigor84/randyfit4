@@ -1,14 +1,18 @@
 import clientPromise from "../../lib/mongodb";
 
-export default async function handler(req, res) {
+export async function GET(req) {
   try {
     const client = await clientPromise;
     const db = client.db("your_database_name"); // Replace with your database name
-
     const clients = await db.collection("clients").find({}).toArray();
-    res.status(200).json({ clients });
+
+    return new Response(JSON.stringify(clients), {
+      headers: { "Content-Type": "application/json" },
+    });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Failed to fetch data from MongoDB" });
+    console.error("Error fetching clients:", error);
+    return new Response(JSON.stringify({ error: "Failed to fetch clients" }), {
+      status: 500,
+    });
   }
 }
