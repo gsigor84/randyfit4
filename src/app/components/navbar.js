@@ -3,12 +3,19 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
+import { useRouter } from "next/navigation"; // For active tab highlighting
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const router = useRouter();
+
+  const navLinks = [
+    { href: "/", label: "Home" },
+    { href: "/add-client", label: "Add Client" },
+  ];
 
   return (
-    <nav className="bg-white text-gray-800 p-4 shadow">
+    <nav className="bg-gray-100 text-gray-800 p-4 shadow-md">
       <div className="max-w-7xl mx-auto flex justify-between items-center">
         {/* Logo and Brand Section */}
         <div className="flex items-center space-x-2">
@@ -21,8 +28,8 @@ export default function Navbar() {
           />
           {/* Brand Text */}
           <div className="flex flex-col justify-center">
-            <span className="text-lg font-bold leading-none">Randy</span>
-            <span className="text-lg font-bold leading-none">Fit</span>
+            <span className="text-xl font-bold leading-none">Randy</span>
+            <span className="text-xl font-bold leading-none">Fit</span>
           </div>
         </div>
 
@@ -50,27 +57,26 @@ export default function Navbar() {
 
         {/* Navigation Links */}
         <ul
-          className={`flex flex-col md:flex-row md:space-x-6 absolute md:static bg-white w-full md:w-auto left-0 top-16 md:top-0 transition-all duration-300 ease-in ${isMenuOpen ? "block" : "hidden md:flex"
+          className={`flex flex-col md:flex-row md:space-x-6 absolute md:static bg-gray-100 w-full md:w-auto left-0 top-16 md:top-0 transition-all duration-300 ease-in ${isMenuOpen ? "block" : "hidden md:flex"
             }`}
         >
-          <li className="border-b md:border-none">
-            <Link
-              href="/"
-              className="block px-4 py-2 md:py-0 hover:text-gray-600 transition"
-              onClick={() => setIsMenuOpen(false)} // Close menu on click
+          {navLinks.map((link) => (
+            <li
+              key={link.href}
+              className={`border-b md:border-none ${router.pathname === link.href
+                  ? "text-blue-500 font-semibold underline"
+                  : ""
+                }`}
             >
-              Home
-            </Link>
-          </li>
-          <li>
-            <Link
-              href="/add-client"
-              className="block px-4 py-2 md:py-0 hover:text-gray-600 transition"
-              onClick={() => setIsMenuOpen(false)} // Close menu on click
-            >
-              Add Client
-            </Link>
-          </li>
+              <Link
+                href={link.href}
+                className="block px-4 py-2 md:py-0 hover:text-blue-500 transition"
+                onClick={() => setIsMenuOpen(false)} // Close menu on click
+              >
+                {link.label}
+              </Link>
+            </li>
+          ))}
         </ul>
       </div>
     </nav>
