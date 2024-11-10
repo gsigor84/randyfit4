@@ -24,3 +24,14 @@ body {
 .main-padding {
   @apply pb-8 px-4;
 }
+
+/* Hero Background Image */
+.hero {
+  background-image: url('/hero-bg.jpg');
+  /* Replace with your image path */
+}
+
+/* Button Hover Effect */
+.btn:hover {
+  background-color: #f3b700;
+}
