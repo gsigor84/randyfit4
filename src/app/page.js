@@ -3,15 +3,29 @@ import Link from "next/link";
 
 export default async function Home() {
   let clients = [];
+  let error = null;
 
   try {
     const client = await clientPromise;
     const db = client.db("your_database_name"); // Replace with your database name
     clients = await db.collection("clients").find({}).toArray();
-  } catch (error) {
-    console.error("Error fetching clients:", error);
+    clients = clients.map((client) => ({
+      ...client,
+      _id: client._id.toString(),
+    }));
+  } catch (err) {
+    console.error("Error fetching clients:", err);
+    error = err.message || "Failed to load clients.";
   }
 
+  if (error) {
+    return (
+      <div className="relative min-h-screen p-4 bg-black text-white">
+        <h1 className="text-3xl text-center mt-8">Error</h1>
+        <p className="text-center mt-4">{error}</p>
+      </div>
+    );
+  }
   return (
     <div
       className="relative min-h-screen p-4"
