@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
-import { useRouter } from "next/navigation"; // For active tab highlighting
+import { useRouter } from "next/navigation";
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -15,18 +15,16 @@ export default function Navbar() {
   ];
 
   return (
-    <nav className="bg-[#1c1c1c] text-white p-4 shadow-md">
-      <div className="max-w-7xl mx-auto flex justify-between items-center">
+    <nav className="bg-gray-900 text-white p-4 shadow-md">
+      <div className="max-w-7xl mx-auto flex justify-between items-center relative">
         {/* Logo and Brand Section */}
         <div className="flex items-center space-x-2">
-          {/* Logo */}
           <Image
-            src="/randyfit.png" // Replace with the path to your logo
+            src="/randyfit.png"
             alt="RandyFit Logo"
             width={40}
             height={40}
           />
-          {/* Brand Text */}
           <div className="flex flex-col justify-center">
             <span className="text-xl font-bold leading-none">Randy</span>
             <span className="text-xl font-bold leading-none">Fit</span>
@@ -36,7 +34,7 @@ export default function Navbar() {
         {/* Menu Button for Mobile */}
         <button
           onClick={() => setIsMenuOpen(!isMenuOpen)}
-          className="md:hidden block text-white hover:text-[#ffa800] focus:outline-none"
+          className="md:hidden block text-white hover:text-gray-300 focus:outline-none"
           aria-label="Toggle menu"
         >
           <svg
@@ -57,20 +55,20 @@ export default function Navbar() {
 
         {/* Navigation Links */}
         <ul
-          className={`flex flex-col md:flex-row md:space-x-6 absolute md:static bg-[#1c1c1c] w-full md:w-auto left-0 top-16 md:top-0 transition-all duration-300 ease-in ${isMenuOpen ? "block" : "hidden md:flex"
+          className={`flex flex-col md:flex-row md:space-x-6 absolute md:static bg-gray-900 md:bg-transparent w-full md:w-auto left-0 top-16 md:top-0 transition-all duration-300 ease-in z-50 ${isMenuOpen ? "block" : "hidden md:flex"
             }`}
         >
           {navLinks.map((link) => (
             <li
               key={link.href}
-              className={`border-b md:border-none ${router.pathname === link.href
-                ? "text-[#ffa800] font-semibold underline"
+              className={`${router.pathname === link.href
+                ? "text-blue-300 font-semibold underline"
                 : ""
                 }`}
             >
               <Link
                 href={link.href}
-                className="block px-4 py-2 md:py-0 hover:text-[#ffa800] transition"
+                className="block px-4 py-2 md:py-0 hover:text-blue-400 transition"
                 onClick={() => setIsMenuOpen(false)} // Close menu on click
               >
                 {link.label}
