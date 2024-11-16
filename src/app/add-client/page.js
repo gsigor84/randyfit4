@@ -5,6 +5,10 @@ import { useRouter } from "next/navigation";
 
 export default function AddClientPage() {
   const [name, setName] = useState("");
+  const [age, setAge] = useState("");
+  const [gender, setGender] = useState("Male");
+  const [weight, setWeight] = useState("");
+  const [height, setHeight] = useState("");
   const [experience, setExperience] = useState("Beginner");
   const [goal, setGoal] = useState("Losing Weight");
   const router = useRouter();
@@ -18,12 +22,16 @@ export default function AddClientPage() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ name, experience, goal }),
+        body: JSON.stringify({ name, age, gender, weight, height, experience, goal }),
       });
 
       if (response.ok) {
         alert("Client added successfully!");
         setName("");
+        setAge("");
+        setGender("Male");
+        setWeight("");
+        setHeight("");
         setExperience("Beginner");
         setGoal("Losing Weight");
         router.push("/"); // Redirect to the main page
@@ -63,6 +71,60 @@ export default function AddClientPage() {
               value={name}
               onChange={(e) => setName(e.target.value)}
               required
+              className="mt-1 block w-full rounded-md bg-gray-800 text-white border-gray-600 focus:ring-[#ffa800] focus:border-[#ffa800] shadow-sm"
+            />
+          </div>
+
+          {/* Age Field */}
+          <div>
+            <label className="block text-sm font-medium text-gray-300">Age</label>
+            <input
+              type="number"
+              value={age}
+              onChange={(e) => setAge(e.target.value)}
+              required
+              min="1"
+              className="mt-1 block w-full rounded-md bg-gray-800 text-white border-gray-600 focus:ring-[#ffa800] focus:border-[#ffa800] shadow-sm"
+            />
+          </div>
+
+          {/* Gender Dropdown */}
+          <div>
+            <label className="block text-sm font-medium text-gray-300">Gender</label>
+            <select
+              value={gender}
+              onChange={(e) => setGender(e.target.value)}
+              className="mt-1 block w-full rounded-md bg-gray-800 text-white border-gray-600 focus:ring-[#ffa800] focus:border-[#ffa800] shadow-sm"
+            >
+              <option>Male</option>
+              <option>Female</option>
+            </select>
+          </div>
+
+          {/* Weight Field */}
+          <div>
+            <label className="block text-sm font-medium text-gray-300">Weight (kg)</label>
+            <input
+              type="number"
+              value={weight}
+              onChange={(e) => setWeight(e.target.value)}
+              required
+              min="1"
+              step="0.1"
+              className="mt-1 block w-full rounded-md bg-gray-800 text-white border-gray-600 focus:ring-[#ffa800] focus:border-[#ffa800] shadow-sm"
+            />
+          </div>
+
+          {/* Height Field */}
+          <div>
+            <label className="block text-sm font-medium text-gray-300">Height (cm)</label>
+            <input
+              type="number"
+              value={height}
+              onChange={(e) => setHeight(e.target.value)}
+              required
+              min="1"
+              step="0.1"
               className="mt-1 block w-full rounded-md bg-gray-800 text-white border-gray-600 focus:ring-[#ffa800] focus:border-[#ffa800] shadow-sm"
             />
           </div>

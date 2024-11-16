@@ -20,21 +20,30 @@ export async function POST(request) {
     // Fetch the current client data
     const clientData = await db.collection("clients").findOne({ _id: new ObjectId(id) });
 
-    if (!clientData || !clientData.fullbody || clientData.fullbody.length === 0) {
+    if (!clientData) {
       return new Response(
-        JSON.stringify({ error: "No existing full-body exercises to update." }),
+        JSON.stringify({ error: "Client not found." }),
         { status: 404, headers: { "Content-Type": "application/json" } }
       );
     }
 
-    // Find the last full-body entry and update it
-    const lastEntryIndex = clientData.fullbody.length - 1;
-    const updatedFullbody = [...clientData.fullbody];
-    updatedFullbody[lastEntryIndex] = {
-      ...updatedFullbody[lastEntryIndex],
-      exercises,
-      date: new Date(), // Update the date as well
-    };
+    const updatedFullbody = clientData.fullbody || [];
+
+    // If no previous full-body exercises exist, add a new entry
+    if (updatedFullbody.length === 0) {
+      updatedFullbody.push({
+        date: new Date(),
+        exercises,
+      });
+    } else {
+      // Update the last entry in the array
+      const lastEntryIndex = updatedFullbody.length - 1;
+      updatedFullbody[lastEntryIndex] = {
+        ...updatedFullbody[lastEntryIndex],
+        exercises,
+        date: new Date(), // Update the date as well
+      };
+    }
 
     // Save the updated fullbody array back to the database
     const result = await db.collection("clients").updateOne(

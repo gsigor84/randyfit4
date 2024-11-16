@@ -1,80 +1,155 @@
 "use client";
 
+import { useClient } from "../ClientContext";
+import { useState } from "react";
+import MacrosCalculator from "../../../components/MacrosCalculator";
+
 export default function MealPlanPage() {
-  const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
-  const categories = ["Breakfast", "Lunch", "Dinner", "Snacks"];
+  const client = useClient();
+
+  const [mealPlan, setMealPlan] = useState({
+    Breakfast: [],
+    Lunch: [],
+    Dinner: [],
+    Snacks: [],
+  });
+
+  const [newMeal, setNewMeal] = useState({
+    name: "",
+    calories: "",
+    protein: "",
+    carbs: "",
+    fats: "",
+  });
+
+  const handleAddMeal = (category) => {
+    if (!newMeal.name || !newMeal.calories || !newMeal.protein || !newMeal.carbs || !newMeal.fats) {
+      alert("Please fill out all fields for the meal.");
+      return;
+    }
+
+    setMealPlan((prevPlan) => ({
+      ...prevPlan,
+      [category]: [...prevPlan[category], { ...newMeal }],
+    }));
+
+    // Clear inputs
+    setNewMeal({
+      name: "",
+      calories: "",
+      protein: "",
+      carbs: "",
+      fats: "",
+    });
+  };
+
+  const handleDeleteMeal = (category, index) => {
+    setMealPlan((prevPlan) => ({
+      ...prevPlan,
+      [category]: prevPlan[category].filter((_, i) => i !== index),
+    }));
+  };
+
+  if (!client) {
+    return <p className="text-white">No client data found.</p>;
+  }
 
   return (
-    <div className="max-w-4xl mx-auto mt-8 p-6 bg-[#1c1c1c] text-white rounded-lg">
-      <h1 className="text-3xl font-bold text-[#ffa800] mb-6">Meal Plan</h1>
+    <div className="p-4">
+      <h1 className="text-3xl font-bold text-white mb-6">Meal Plan</h1>
 
-      {/* Day Selector */}
+      {/* Macros Calculator */}
       <div className="mb-6">
-        <div className="flex gap-2 overflow-x-auto scrollbar-hide">
-          {days.map((day) => (
-            <button
-              key={day}
-              className="flex-shrink-0 py-2 px-4 rounded bg-[#333] text-white hover:bg-[#ffa800] hover:text-black"
-            >
-              {day}
-            </button>
-          ))}
-        </div>
+        <h2 className="text-2xl font-bold text-[#ffa800] mb-4">Macro Calculator</h2>
+        <MacrosCalculator
+          age={client.age}
+          weight={client.weight}
+          height={client.height}
+          gender={client.gender}
+          goal={client.goal}
+        />
       </div>
 
-      {/* Meal Categories */}
-      {categories.map((category) => (
-        <details key={category} className="mb-6 bg-[#2c2c2c] p-4 rounded-md">
-          <summary className="text-xl font-semibold text-[#ffa800] cursor-pointer">
-            {category}
-          </summary>
+      {/* Meal Plan Section */}
+      <div className="space-y-6">
+        {Object.keys(mealPlan).map((category) => (
+          <div key={category} className="p-4 bg-[#1c1c1c] rounded-md shadow-md">
+            <h2 className="text-2xl font-bold text-[#ffa800] mb-4">{category}</h2>
 
-          {/* Example Meal Items */}
-          <ul className="mt-4 space-y-2">
-            <li className="bg-[#333] p-2 rounded-md flex justify-between items-center">
-              <div>
-                <p>Example Meal 1</p>
-                <p className="text-sm text-gray-400">500 kcal | Protein: 30g | Carbs: 50g | Fats: 20g</p>
-              </div>
-              <div className="flex gap-2">
-                <button className="text-blue-500 hover:text-blue-700">Edit</button>
-                <button className="text-red-500 hover:text-red-700">Delete</button>
-              </div>
-            </li>
-            <li className="bg-[#333] p-2 rounded-md flex justify-between items-center">
-              <div>
-                <p>Example Meal 2</p>
-                <p className="text-sm text-gray-400">300 kcal | Protein: 15g | Carbs: 20g | Fats: 10g</p>
-              </div>
-              <div className="flex gap-2">
-                <button className="text-blue-500 hover:text-blue-700">Edit</button>
-                <button className="text-red-500 hover:text-red-700">Delete</button>
-              </div>
-            </li>
-          </ul>
-
-          {/* Add Meal Form */}
-          <form className="mt-4 flex flex-col gap-2">
-            <input
-              type="text"
-              placeholder={`Add a new ${category} meal`}
-              className="w-full p-2 bg-[#444] text-white rounded"
-            />
-            <div className="flex gap-2">
-              <input type="number" placeholder="Calories" className="w-1/4 p-2 bg-[#444] text-white rounded" />
-              <input type="number" placeholder="Protein" className="w-1/4 p-2 bg-[#444] text-white rounded" />
-              <input type="number" placeholder="Carbs" className="w-1/4 p-2 bg-[#444] text-white rounded" />
-              <input type="number" placeholder="Fats" className="w-1/4 p-2 bg-[#444] text-white rounded" />
+            {/* Existing Meals */}
+            <div className="space-y-2">
+              {mealPlan[category].map((meal, index) => (
+                <div
+                  key={index}
+                  className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-2 bg-gray-800 rounded-md space-y-2 sm:space-y-0"
+                >
+                  <div>
+                    <p className="text-sm text-white font-bold">{meal.name}</p>
+                    <p className="text-sm text-white">
+                      {meal.calories} kcal | Protein: {meal.protein}g | Carbs: {meal.carbs}g | Fats:{" "}
+                      {meal.fats}g
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => handleDeleteMeal(category, index)}
+                    className="text-sm text-red-500 hover:underline"
+                  >
+                    Delete
+                  </button>
+                </div>
+              ))}
             </div>
-            <button
-              type="submit"
-              className="bg-[#ffa800] text-black py-2 px-4 rounded hover:bg-[#cc8800]"
-            >
-              Add
-            </button>
-          </form>
-        </details>
-      ))}
+
+            {/* Add New Meal */}
+            <div className="mt-6 space-y-4">
+              <h3 className="text-sm font-semibold text-gray-300">Add a new {category} meal</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-5 gap-4">
+                <input
+                  type="text"
+                  placeholder="Meal Name"
+                  value={newMeal.name}
+                  onChange={(e) => setNewMeal({ ...newMeal, name: e.target.value })}
+                  className="col-span-1 sm:col-span-5 p-2 rounded-md bg-gray-800 text-white border border-gray-600 w-full"
+                />
+                <input
+                  type="number"
+                  placeholder="Calories"
+                  value={newMeal.calories}
+                  onChange={(e) => setNewMeal({ ...newMeal, calories: e.target.value })}
+                  className="p-2 rounded-md bg-gray-800 text-white border border-gray-600 w-full"
+                />
+                <input
+                  type="number"
+                  placeholder="Protein (g)"
+                  value={newMeal.protein}
+                  onChange={(e) => setNewMeal({ ...newMeal, protein: e.target.value })}
+                  className="p-2 rounded-md bg-gray-800 text-white border border-gray-600 w-full"
+                />
+                <input
+                  type="number"
+                  placeholder="Carbs (g)"
+                  value={newMeal.carbs}
+                  onChange={(e) => setNewMeal({ ...newMeal, carbs: e.target.value })}
+                  className="p-2 rounded-md bg-gray-800 text-white border border-gray-600 w-full"
+                />
+                <input
+                  type="number"
+                  placeholder="Fats (g)"
+                  value={newMeal.fats}
+                  onChange={(e) => setNewMeal({ ...newMeal, fats: e.target.value })}
+                  className="p-2 rounded-md bg-gray-800 text-white border border-gray-600 w-full"
+                />
+              </div>
+              <button
+                onClick={() => handleAddMeal(category)}
+                className="mt-2 bg-[#ffa800] text-black font-semibold py-2 px-4 rounded hover:bg-[#cc8400] focus:ring-2 focus:ring-[#ffa800]"
+              >
+                Add
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

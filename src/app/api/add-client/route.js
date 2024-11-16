@@ -5,8 +5,16 @@ export async function POST(req) {
     console.log("Request received for adding client...");
 
     // Parse the incoming request body
-    const { name, experience, goal } = await req.json();
-    console.log("Request body:", { name, experience, goal }); // Log the data
+    const { name, age, gender, weight, height, experience, goal } = await req.json();
+    console.log("Request body:", { name, age, gender, weight, height, experience, goal }); // Log the data
+
+    // Validate the input data (basic validation)
+    if (!name || !age || !gender || !weight || !height || !experience || !goal) {
+      return new Response(
+        JSON.stringify({ error: "All fields are required." }),
+        { status: 400 }
+      );
+    }
 
     // Connect to MongoDB
     const client = await clientPromise;
@@ -14,7 +22,16 @@ export async function POST(req) {
 
     // Insert into the "clients" collection
     const db = client.db("your_database_name"); // Replace with your actual database name
-    const result = await db.collection("clients").insertOne({ name, experience, goal });
+    const result = await db.collection("clients").insertOne({
+      name,
+      age: parseInt(age, 10), // Ensure age is stored as a number
+      gender,
+      weight: parseFloat(weight), // Ensure weight is stored as a number
+      height: parseFloat(height), // Ensure height is stored as a number
+      experience,
+      goal,
+      createdAt: new Date(), // Optional: add a timestamp for when the client was added
+    });
 
     console.log("Client added:", result);
 

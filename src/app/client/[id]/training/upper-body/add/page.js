@@ -9,11 +9,13 @@ export default function AddUpperBodyExercise({ params }) {
 
   const [lastExerciseEntry, setLastExerciseEntry] = useState(null);
   const [exercises, setExercises] = useState([]);
+  const [isLoading, setIsLoading] = useState(true); // Loading state
 
   // Fetch the last upper body exercise entry
   useEffect(() => {
     const fetchLastEntry = async () => {
       try {
+        setIsLoading(true);
         const response = await fetch(`/api/get-client?id=${id}`);
         const data = await response.json();
         console.log("Fetched Data:", data); // Debugging log
@@ -33,6 +35,8 @@ export default function AddUpperBodyExercise({ params }) {
         }
       } catch (error) {
         console.error("Error fetching client data:", error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -49,6 +53,12 @@ export default function AddUpperBodyExercise({ params }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Validation: Check for empty fields
+    if (exercises.some((exercise) => !exercise.name || !exercise.sets || !exercise.weight || !exercise.reps)) {
+      alert("Please complete all exercise fields before submitting.");
+      return;
+    }
 
     try {
       const response = await fetch("/api/update-client-upperbody", {
@@ -68,42 +78,60 @@ export default function AddUpperBodyExercise({ params }) {
       });
 
       if (response.ok) {
-        console.log("Exercises updated successfully! Redirecting to Training Page...");
-
-        // Redirect to the Training Page
-        router.push(`/client/${id}/training`);
+        alert("Exercises saved successfully!");
+        router.push(`/client/${id}/training`); // Redirect to training page
       } else {
         const errorData = await response.json();
-        console.error("Error saving exercises:", errorData.error);
         alert(`Failed to update exercises: ${errorData.error}`);
       }
     } catch (error) {
-      console.error("Error updating exercises:", error);
       alert("An error occurred while updating exercises.");
     }
   };
 
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-[#ffa800]"></div>
+      </div>
+    );
+  }
+
   if (!lastExerciseEntry) {
     return (
-      <div className="max-w-7xl mx-auto mt-8">
-        <h1 className="text-2xl font-semibold mb-4">Add Upper Body Exercise</h1>
-        <p className="text-gray-500">No previous exercises found. Start by adding a new one!</p>
+      <div className="max-w-7xl mx-auto mt-8 text-center">
+        <h1 className="text-2xl font-semibold text-[#ffa800] mb-4">Add Upper Body Exercise</h1>
+        <p className="text-gray-300">
+          No previous exercises found. Start adding exercises to begin tracking!
+        </p>
       </div>
     );
   }
 
   return (
     <div className="max-w-7xl mx-auto mt-8">
-      <h1 className="text-2xl font-semibold mb-4">Edit Last Upper Body Exercise</h1>
+      <h1 className="text-2xl font-semibold text-[#ffa800] mb-4">Edit Last Upper Body Exercise</h1>
       <form onSubmit={handleSubmit} className="space-y-6">
         {exercises.map((exercise, index) => (
           <div
             key={index}
-            className="flex flex-col md:flex-row md:items-center justify-between mb-4 bg-gray-100 p-4 rounded shadow"
+            className="flex flex-col md:flex-row md:items-center justify-between mb-4 bg-[#2c2c2c] p-4 rounded-lg shadow"
           >
             {/* Exercise Name */}
             <div className="mb-2 md:mb-0">
-              <h2 className="text-sm md:text-md font-medium text-gray-800">{exercise.name}</h2>
+              <label
+                htmlFor={`name-${index}`}
+                className="block text-sm font-medium text-gray-300 mb-1"
+              >
+                Exercise Name
+              </label>
+              <input
+                id={`name-${index}`}
+                type="text"
+                value={exercise.name}
+                onChange={(e) => handleChange(index, "name", e.target.value)}
+                className="border border-gray-600 rounded px-3 py-1 text-sm bg-[#1c1c1c] text-white focus:ring-[#ffa800] focus:border-[#ffa800]"
+              />
             </div>
 
             {/* Inputs for Sets, Weight, Reps */}
@@ -111,7 +139,7 @@ export default function AddUpperBodyExercise({ params }) {
               <div>
                 <label
                   htmlFor={`sets-${index}`}
-                  className="block text-sm font-medium text-gray-700 mb-1"
+                  className="block text-sm font-medium text-gray-300 mb-1"
                 >
                   Sets
                 </label>
@@ -121,7 +149,7 @@ export default function AddUpperBodyExercise({ params }) {
                   onChange={(e) =>
                     handleChange(index, "sets", Number(e.target.value))
                   }
-                  className="border border-gray-300 rounded px-3 py-1 text-sm"
+                  className="border border-gray-600 rounded px-3 py-1 text-sm bg-[#1c1c1c] text-white focus:ring-[#ffa800] focus:border-[#ffa800]"
                 >
                   {[...Array(6).keys()].map((num) => (
                     <option key={num + 1} value={num + 1}>
@@ -134,7 +162,7 @@ export default function AddUpperBodyExercise({ params }) {
               <div>
                 <label
                   htmlFor={`weight-${index}`}
-                  className="block text-sm font-medium text-gray-700 mb-1"
+                  className="block text-sm font-medium text-gray-300 mb-1"
                 >
                   Weight (kg)
                 </label>
@@ -144,7 +172,7 @@ export default function AddUpperBodyExercise({ params }) {
                   onChange={(e) =>
                     handleChange(index, "weight", Number(e.target.value))
                   }
-                  className="border border-gray-300 rounded px-3 py-1 text-sm"
+                  className="border border-gray-600 rounded px-3 py-1 text-sm bg-[#1c1c1c] text-white focus:ring-[#ffa800] focus:border-[#ffa800]"
                 >
                   {Array.from({ length: 40 }, (_, i) => (i + 1) * 5).map(
                     (weight) => (
@@ -159,7 +187,7 @@ export default function AddUpperBodyExercise({ params }) {
               <div>
                 <label
                   htmlFor={`reps-${index}`}
-                  className="block text-sm font-medium text-gray-700 mb-1"
+                  className="block text-sm font-medium text-gray-300 mb-1"
                 >
                   Reps
                 </label>
@@ -169,7 +197,7 @@ export default function AddUpperBodyExercise({ params }) {
                   onChange={(e) =>
                     handleChange(index, "reps", Number(e.target.value))
                   }
-                  className="border border-gray-300 rounded px-3 py-1 text-sm"
+                  className="border border-gray-600 rounded px-3 py-1 text-sm bg-[#1c1c1c] text-white focus:ring-[#ffa800] focus:border-[#ffa800]"
                 >
                   {Array.from({ length: 20 }, (_, i) => i + 1).map((rep) => (
                     <option key={rep} value={rep}>
@@ -184,7 +212,7 @@ export default function AddUpperBodyExercise({ params }) {
 
         <button
           type="submit"
-          className="mt-6 bg-blue-500 text-white py-2 px-6 rounded hover:bg-blue-600 focus:ring-2 focus:ring-blue-300"
+          className="mt-6 bg-[#ffa800] text-black py-2 px-6 rounded hover:bg-[#cc8400] focus:ring-2 focus:ring-[#ffa800]"
         >
           Save Changes
         </button>

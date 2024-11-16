@@ -1,5 +1,8 @@
+import React from "react";
 import clientPromise from "../../../lib/mongodb";
 import { ObjectId } from "mongodb";
+import DeleteClientButton from "../[id]/delete-client-button";
+import { ClientProvider } from "../[id]/ClientContext";
 
 export default async function ClientLayout({ children, params }) {
   const { id } = params;
@@ -41,65 +44,82 @@ export default async function ClientLayout({ children, params }) {
 
       {/* Content */}
       <div className="relative max-w-7xl mx-auto mt-8 p-6 bg-[#1c1c1c] text-white bg-opacity-90 rounded-lg">
-        {/* Client Info */}
-        <div className="flex flex-col md:flex-row justify-between items-center mb-8">
-          <div>
-            <h1 className="text-3xl font-bold text-[#ffa800] mb-2">
-              {client.name}
-            </h1>
-            <p className="text-sm">
-              <span className="font-semibold text-gray-300">
-                Experience Level:
-              </span>{" "}
-              {client.experience}
-            </p>
-            <p className="text-sm">
-              <span className="font-semibold text-gray-300">Training Goal:</span>{" "}
-              {client.goal}
-            </p>
+        <ClientProvider value={client}>
+          {/* Client Info */}
+          <div className="flex flex-col md:flex-row justify-between md:items-center mb-8 gap-6">
+            <div className="space-y-2">
+              <h1 className="text-3xl font-bold text-[#ffa800]">
+                {client.name}
+              </h1>
+              <p className="text-sm">
+                <span className="font-semibold text-gray-300">Age:</span> {client.age || "N/A"}
+              </p>
+              <p className="text-sm">
+                <span className="font-semibold text-gray-300">Gender:</span> {client.gender || "N/A"}
+              </p>
+              <p className="text-sm">
+                <span className="font-semibold text-gray-300">Weight:</span> {client.weight || "N/A"} kg
+              </p>
+              <p className="text-sm">
+                <span className="font-semibold text-gray-300">Height:</span> {client.height || "N/A"} cm
+              </p>
+              <p className="text-sm">
+                <span className="font-semibold text-gray-300">Experience Level:</span>{" "}
+                {client.experience}
+              </p>
+              <p className="text-sm">
+                <span className="font-semibold text-gray-300">Training Goal:</span>{" "}
+                {client.goal}
+              </p>
+            </div>
+
+            {/* Delete Client Button */}
+            <div className="w-full md:w-auto">
+              <DeleteClientButton clientId={id} />
+            </div>
           </div>
-        </div>
 
-        {/* Navigation Tabs */}
-        <nav className="mb-6">
-          <ul className="flex flex-wrap justify-center gap-6">
-            <li>
-              <a
-                href={`/client/${id}/training`}
-                className="text-[#ffa800] font-semibold hover:underline"
-              >
-                Training
-              </a>
-            </li>
-            <li>
-              <a
-                href={`/client/${id}/overview`}
-                className="text-[#ffa800] font-semibold hover:underline"
-              >
-                Overview
-              </a>
-            </li>
-            <li>
-              <a
-                href={`/client/${id}/tasks`}
-                className="text-[#ffa800] font-semibold hover:underline"
-              >
-                Tasks
-              </a>
-            </li>
-            <li>
-              <a
-                href={`/client/${id}/meal-plan`}
-                className="text-[#ffa800] font-semibold hover:underline"
-              >
-                Meal Plan
-              </a>
-            </li>
-          </ul>
-        </nav>
+          {/* Navigation Tabs */}
+          <nav className="mb-6">
+            <ul className="flex flex-wrap justify-center gap-4">
+              <li>
+                <a
+                  href={`/client/${id}/training`}
+                  className="text-[#ffa800] font-semibold hover:underline"
+                >
+                  Training
+                </a>
+              </li>
+              <li>
+                <a
+                  href={`/client/${id}/overview`}
+                  className="text-[#ffa800] font-semibold hover:underline"
+                >
+                  Overview
+                </a>
+              </li>
+              <li>
+                <a
+                  href={`/client/${id}/tasks`}
+                  className="text-[#ffa800] font-semibold hover:underline"
+                >
+                  Tasks
+                </a>
+              </li>
+              <li>
+                <a
+                  href={`/client/${id}/meal-plan`}
+                  className="text-[#ffa800] font-semibold hover:underline"
+                >
+                  Meal Plan
+                </a>
+              </li>
+            </ul>
+          </nav>
 
-        {/* Render Children */}
-        <div>{children}</div>
+          {/* Render Children */}
+          {children}
+        </ClientProvider>
       </div>
     </div>
   );
