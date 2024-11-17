@@ -26,6 +26,7 @@ export default async function Home() {
       </div>
     );
   }
+
   return (
     <div
       className="relative min-h-screen p-4"
