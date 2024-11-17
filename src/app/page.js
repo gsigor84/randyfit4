@@ -1,24 +1,30 @@
-import clientPromise from "../lib/mongodb";
+"use client";
+
+import { useState, useEffect } from "react";
 import Link from "next/link";
 
-export const revalidate = 10; // Revalidate the page every 10 seconds
+export default function Home() {
+  const [clients, setClients] = useState([]);
+  const [error, setError] = useState(null);
 
-export default async function Home() {
-  let clients = [];
-  let error = null;
+  // Fetch clients from the API
+  useEffect(() => {
+    const fetchClients = async () => {
+      try {
+        const response = await fetch("/api/clients");
+        if (!response.ok) {
+          throw new Error(`Failed to fetch clients. Status: ${response.status}`);
+        }
+        const data = await response.json();
+        setClients(data);
+      } catch (err) {
+        console.error("Error fetching clients:", err);
+        setError(err.message || "Failed to load clients.");
+      }
+    };
 
-  try {
-    const client = await clientPromise;
-    const db = client.db("your_database_name"); // Replace with your database name
-    clients = await db.collection("clients").find({}).toArray();
-    clients = clients.map((client) => ({
-      ...client,
-      _id: client._id.toString(),
-    }));
-  } catch (err) {
-    console.error("Error fetching clients:", err);
-    error = err.message || "Failed to load clients.";
-  }
+    fetchClients();
+  }, []);
 
   if (error) {
     return (
