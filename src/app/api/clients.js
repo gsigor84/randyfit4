@@ -1,12 +1,18 @@
-import clientPromise from "../../lib/mongodb";
+import clientPromise from "../../../lib/mongodb";
 
-export async function GET(req) {
+export async function GET() {
   try {
     const client = await clientPromise;
-    const db = client.db("your_database_name"); // Replace with your database name
+    const db = client.db("your_database_name"); // Replace with your actual database name
     const clients = await db.collection("clients").find({}).toArray();
 
-    return new Response(JSON.stringify(clients), {
+    // Convert MongoDB ObjectIDs to strings
+    const clientsWithIds = clients.map((client) => ({
+      ...client,
+      _id: client._id.toString(),
+    }));
+
+    return new Response(JSON.stringify(clientsWithIds), {
       headers: { "Content-Type": "application/json" },
     });
   } catch (error) {

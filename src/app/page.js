@@ -1,6 +1,8 @@
 import clientPromise from "../lib/mongodb";
 import Link from "next/link";
 
+export const revalidate = 10; // Revalidate the page every 10 seconds
+
 export default async function Home() {
   let clients = [];
   let error = null;
