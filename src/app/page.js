@@ -1,30 +1,41 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 
 export default function Home() {
   const [clients, setClients] = useState([]);
   const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Fetch clients from the API
-  useEffect(() => {
-    const fetchClients = async () => {
-      try {
-        const response = await fetch("/api/clients");
-        if (!response.ok) {
-          throw new Error(`Failed to fetch clients. Status: ${response.status}`);
-        }
-        const data = await response.json();
-        setClients(data);
-      } catch (err) {
-        console.error("Error fetching clients:", err);
-        setError(err.message || "Failed to load clients.");
+  const fetchClients = async () => {
+    try {
+      setIsLoading(true);
+      const response = await fetch("/api/clients");
+      if (!response.ok) {
+        throw new Error(`Failed to fetch clients. Status: ${response.status}`);
       }
-    };
+      const data = await response.json();
+      setClients(data); // Update the client list
+    } catch (err) {
+      console.error("Error fetching clients:", err.message);
+      setError(err.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-    fetchClients();
+  useEffect(() => {
+    fetchClients(); // Fetch clients when the page loads
   }, []);
+
+  if (isLoading) {
+    return (
+      <div className="relative min-h-screen p-4 bg-black text-white flex items-center justify-center">
+        <p className="text-xl">Loading clients...</p>
+      </div>
+    );
+  }
 
   if (error) {
     return (
