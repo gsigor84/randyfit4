@@ -13,7 +13,7 @@ export default function AddExerciseButton({ label, navigateTo }) {
   return (
     <button
       onClick={handleClick}
-      className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 focus:ring-2 focus:ring-blue-300"
+      className="bg-[#ffa800] text-black font-semibold py-2 px-4 rounded hover:bg-[#cc8400] focus:ring-2 focus:ring-[#ffa800] transition-all"
     >
       {label}
     </button>

@@ -89,11 +89,11 @@ export default function FullBodyExercises({ clientId }) {
   };
 
   return (
-    <div className="bg-gray-200 p-6 rounded shadow mb-6">
-      <h2 className="text-xl font-bold text-gray-800 mb-4">Full Body Exercises</h2>
+    <div className="bg-[#2B2B2B] p-6 rounded-lg shadow mb-8">
+      <h2 className="text-xl font-bold text-[#FFA800] mb-4">Full Body Exercises</h2>
       {Object.entries(fullBodyExercises).map(([muscleGroup, exercises]) => (
         <div key={muscleGroup} className="mb-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">{muscleGroup}</h3>
+          <h3 className="text-lg font-semibold text-[#FFA800] mb-2">{muscleGroup}</h3>
           <ul className="space-y-4">
             {exercises.map((exercise, index) => (
               <li key={index} className="flex flex-col space-y-2">
@@ -103,42 +103,42 @@ export default function FullBodyExercises({ clientId }) {
                     type="checkbox"
                     checked={!!selectedExercises[exercise]}
                     onChange={() => toggleExercise(exercise)}
-                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                    className="h-4 w-4 text-[#FFA800] focus:ring-[#FFA800] border-gray-300 rounded"
                   />
-                  <span className="text-gray-700 font-medium">{exercise}</span>
+                  <span className="text-white font-medium">{exercise}</span>
                 </div>
 
                 {/* Input fields for reps, weight, and sets */}
                 {selectedExercises[exercise] && (
                   <div className="ml-8 grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div className="flex flex-col">
-                      <label className="block text-gray-600 text-sm mb-1">Reps</label>
+                      <label className="block text-gray-300 text-sm mb-1">Reps</label>
                       <input
                         type="number"
                         placeholder="Reps"
                         value={selectedExercises[exercise].reps}
                         onChange={(e) => handleInputChange(exercise, "reps", e.target.value)}
-                        className="border border-gray-300 text-gray-800 rounded p-2 w-full"
+                        className="border border-gray-600 text-white bg-gray-800 rounded p-2 w-full focus:ring-2 focus:ring-[#FFA800]"
                       />
                     </div>
                     <div className="flex flex-col">
-                      <label className="block text-gray-600 text-sm mb-1">Sets</label>
+                      <label className="block text-gray-300 text-sm mb-1">Sets</label>
                       <input
                         type="number"
                         placeholder="Sets"
                         value={selectedExercises[exercise].sets}
                         onChange={(e) => handleInputChange(exercise, "sets", e.target.value)}
-                        className="border border-gray-300 text-gray-800 rounded p-2 w-full"
+                        className="border border-gray-600 text-white bg-gray-800 rounded p-2 w-full focus:ring-2 focus:ring-[#FFA800]"
                       />
                     </div>
                     <div className="flex flex-col">
-                      <label className="block text-gray-600 text-sm mb-1">Weight (kg)</label>
+                      <label className="block text-gray-300 text-sm mb-1">Weight (kg)</label>
                       <input
                         type="number"
                         placeholder="Weight"
                         value={selectedExercises[exercise].weight}
                         onChange={(e) => handleInputChange(exercise, "weight", e.target.value)}
-                        className="border border-gray-300 text-gray-800 rounded p-2 w-full"
+                        className="border border-gray-600 text-white bg-gray-800 rounded p-2 w-full focus:ring-2 focus:ring-[#FFA800]"
                       />
                     </div>
                   </div>
@@ -152,7 +152,7 @@ export default function FullBodyExercises({ clientId }) {
       <button
         onClick={handleSubmit}
         disabled={loading}
-        className={`mt-4 w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 ${loading && "opacity-50 cursor-not-allowed"}`}
+        className={`mt-4 w-full bg-[#FFA800] text-black py-2 px-4 rounded hover:bg-[#cc8400] focus:ring-2 focus:ring-[#FFA800] transition-all ${loading && "opacity-50 cursor-not-allowed"}`}
       >
         {loading ? "Saving..." : "Save Exercises"}
       </button>

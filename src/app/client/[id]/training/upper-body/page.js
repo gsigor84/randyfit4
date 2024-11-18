@@ -11,15 +11,17 @@ export default function TrainingPage() {
 
   if (!clientId) {
     return (
-      <div>
-        <p className="text-red-500">Error: Client ID is missing in the URL!</p>
+      <div className="max-w-7xl mx-auto mt-8 p-6 bg-[#1c1c1c] rounded-lg shadow">
+        <p className="text-red-500 text-lg font-semibold">Error: Client ID is missing in the URL!</p>
       </div>
     );
   }
 
   return (
-    <div>
-      <h1 className="text-xl font-bold mb-4">Training Page for Client {clientId}</h1>
+    <div className="max-w-7xl mx-auto mt-8 p-6 bg-[#1c1c1c] rounded-lg shadow">
+
+
+      {/* Upper Body Exercises Section */}
       <UpperBodyExercises clientId={clientId} />
     </div>
   );
