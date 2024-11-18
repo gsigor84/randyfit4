@@ -1,231 +1,138 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
+import AddExerciseButton from "../../../components/AddExerciseButton";
+import { useParams } from "next/navigation";
 
-export default function TrainingPage({ params }) {
-  const { id } = params; // Extract client ID
-  const router = useRouter();
-  const [upperbodyExercises, setUpperbodyExercises] = useState([]);
-  const [lowerbodyExercises, setLowerbodyExercises] = useState([]);
-  const [fullbodyExercises, setFullbodyExercises] = useState([]);
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(true); // Loader state
+export default function TrainingPage() {
+  const params = useParams();
+  const id = params?.id;
+
+  const [upperBodyExercises, setUpperBodyExercises] = useState([]);
+  const [lowerBodyExercises, setLowerBodyExercises] = useState([]);
+  const [fullBodyExercises, setFullBodyExercises] = useState([]);
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (!id) {
+      setError("No client ID provided.");
+      return;
+    }
+
     const fetchClientData = async () => {
+      setLoading(true);
       try {
-        setIsLoading(true); // Start loader
-        const response = await fetch(`/api/get-client?id=${id}`);
-        const data = await response.json();
+        const res = await fetch(`/api/get-client?id=${id}`);
+        if (!res.ok) throw new Error("Failed to fetch client data");
 
-        console.log("Fetched client data:", data); // Debugging log
+        const data = await res.json();
 
-        setUpperbodyExercises(data.upperbody || []);
-        setLowerbodyExercises(data.lowerbody || []);
-        setFullbodyExercises(data.fullbody || []);
-      } catch (error) {
-        console.error("Error fetching client data:", error);
+        setUpperBodyExercises(data.upperbody || []);
+        setLowerBodyExercises(data.lowerbody || []);
+        setFullBodyExercises(data.fullbody || []);
+      } catch (err) {
+        console.error("Error fetching client data:", err);
+        setError("Failed to fetch client data.");
       } finally {
-        setIsLoading(false); // Stop loader
+        setLoading(false);
       }
     };
 
     fetchClientData();
   }, [id]);
 
-  const renderExerciseTable = (exercises) => (
-    <div className="overflow-x-auto">
-      <table className="hidden sm:table table-auto w-full border-collapse border border-gray-300">
-        <thead>
-          <tr className="bg-gray-200">
-            <th className="px-4 py-2 border border-gray-300 text-left text-black">Exercise Name</th>
-            <th className="px-4 py-2 border border-gray-300 text-left text-black">Sets</th>
-            <th className="px-4 py-2 border border-gray-300 text-left text-black">Weight (kg)</th>
-            <th className="px-4 py-2 border border-gray-300 text-left text-black">Reps</th>
-          </tr>
-        </thead>
-        <tbody>
-          {exercises.map((exercise, idx) => (
-            <tr
-              key={idx}
-              className="hover:bg-[#ffa800] hover:text-black even:bg-gray-100 odd:bg-white"
-            >
-              <td className="px-4 py-2 border border-gray-300 text-black">
-                {exercise.name || "Unnamed Exercise"}
-              </td>
-              <td className="px-4 py-2 border border-gray-300 text-black">{exercise.sets || "N/A"}</td>
-              <td className="px-4 py-2 border border-gray-300 text-black">{exercise.weight || "N/A"}</td>
-              <td className="px-4 py-2 border border-gray-300 text-black">{exercise.reps || "N/A"}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-
-      {/* Mobile View */}
-      <div className="sm:hidden mt-4">
-        {exercises.map((exercise, idx) => (
-          <div
-            key={idx}
-            className="border border-gray-300 rounded-lg p-4 mb-4 bg-white shadow-md"
-          >
-            <div className="flex justify-between">
-              <span className="font-semibold text-gray-700">Exercise Name:</span>
-              <span className="text-black">{exercise.name || "Unnamed Exercise"}</span>
-            </div>
-            <div className="flex justify-between mt-2">
-              <span className="font-semibold text-gray-700">Sets:</span>
-              <span className="text-black">{exercise.sets || "N/A"}</span>
-            </div>
-            <div className="flex justify-between mt-2">
-              <span className="font-semibold text-gray-700">Weight (kg):</span>
-              <span className="text-black">{exercise.weight || "N/A"}</span>
-            </div>
-            <div className="flex justify-between mt-2">
-              <span className="font-semibold text-gray-700">Reps:</span>
-              <span className="text-black">{exercise.reps || "N/A"}</span>
-            </div>
-          </div>
-        ))}
+  if (loading) {
+    return (
+      <div className="max-w-7xl mx-auto mt-8">
+        <h1 className="text-3xl font-semibold text-[#FFA800] mb-6">Loading...</h1>
       </div>
-    </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="max-w-7xl mx-auto mt-8">
+        <h1 className="text-3xl font-semibold text-red-500 mb-6">Error</h1>
+        <p className="text-red-400">{error}</p>
+      </div>
+    );
+  }
+
+  const renderExerciseTable = (exercises) => (
+    <table className="table-auto w-full text-sm text-left border-collapse border border-gray-700">
+      <thead>
+        <tr className="bg-gray-800 text-gray-300">
+          <th className="border border-gray-600 px-2 py-1">Exercise Name</th>
+          <th className="border border-gray-600 px-2 py-1">Sets</th>
+          <th className="border border-gray-600 px-2 py-1">Weight (kg)</th>
+          <th className="border border-gray-600 px-2 py-1">Reps</th>
+        </tr>
+      </thead>
+      <tbody>
+        {exercises.map((exercise, index) => (
+          <tr key={index} className="odd:bg-gray-700 even:bg-gray-800">
+            <td className="border border-gray-600 px-2 py-1 text-gray-300">{exercise.name}</td>
+            <td className="border border-gray-600 px-2 py-1 text-gray-300">{exercise.sets}</td>
+            <td className="border border-gray-600 px-2 py-1 text-gray-300">{exercise.weight}</td>
+            <td className="border border-gray-600 px-2 py-1 text-gray-300">{exercise.reps}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
   );
 
+  const renderExerciseEntries = (entries) =>
+    entries.map((entry, index) => (
+      <div key={index} className="mb-6">
+        <p className="text-sm text-gray-300">
+          <strong>Saved on:</strong>{" "}
+          {entry.date ? new Date(entry.date).toLocaleDateString() : "N/A"}
+        </p>
+        {renderExerciseTable(entry.exercises || [entry])}
+      </div>
+    ));
+
   return (
-    <div
-      className="relative min-h-screen"
-      style={{
-        backgroundImage: `url('https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        backgroundRepeat: "no-repeat",
-      }}
-    >
-      {/* Overlay */}
-      <div className="absolute inset-0 bg-black opacity-80"></div>
+    <div className="max-w-7xl mx-auto mt-8">
+      <h1 className="text-3xl font-semibold text-[#FFA800] mb-6">Training Overview</h1>
 
-      {/* Content */}
-      <div className="relative max-w-7xl mx-auto mt-8 bg-[#1c1c1c] text-white bg-opacity-90 rounded-lg">
-        <h1 className="text-3xl font-bold text-[#ffa800] mb-4 px-6">Training</h1>
-
-        {/* Navigation Buttons */}
-        <div className="flex flex-wrap sm:flex-nowrap gap-4 mb-6 px-6">
-          <button
-            onClick={() => router.push(`/client/${id}/training/upper-body`)}
-            className="w-full sm:w-auto bg-[#ffa800] hover:bg-[#cc8800] text-black font-semibold py-2 px-4 rounded shadow-md focus:ring-2 focus:ring-offset-2 focus:ring-[#cc8800]"
-          >
-            Upper Body
-          </button>
-          <button
-            onClick={() => router.push(`/client/${id}/training/lower-body`)}
-            className="w-full sm:w-auto bg-[#ffa800] hover:bg-[#cc8800] text-black font-semibold py-2 px-4 rounded shadow-md focus:ring-2 focus:ring-offset-2 focus:ring-[#cc8800]"
-          >
-            Lower Body
-          </button>
-          <button
-            onClick={() => router.push(`/client/${id}/training/full-body`)}
-            className="w-full sm:w-auto bg-[#ffa800] hover:bg-[#cc8800] text-black font-semibold py-2 px-4 rounded shadow-md focus:ring-2 focus:ring-offset-2 focus:ring-[#cc8800]"
-          >
-            Full Body
-          </button>
-          <button
-            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-            className="w-full sm:w-auto bg-[#ffa800] hover:bg-[#cc8800] text-black font-semibold py-2 px-4 rounded shadow-md focus:ring-2 focus:ring-offset-2 focus:ring-[#cc8800]"
-          >
-            Manage Exercises
-          </button>
+      {/* Upper Body Section */}
+      <div className="bg-[#2B2B2B] p-6 rounded shadow mb-8">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-xl font-semibold text-[#FFA800]">Upper Body Exercises</h2>
+          <AddExerciseButton label="Add Upper Body Exercises" navigateTo={`/client/${id}/training/upper-body`} />
         </div>
-
-        {/* Dropdown for Manage Exercises */}
-        {isDropdownOpen && (
-          <div className="relative px-6">
-            <div className="absolute bg-white rounded-lg shadow-md z-10">
-              <button
-                onClick={() => router.push(`/client/${id}/training/upper-body/add`)}
-                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
-              >
-                Add Upper Body Exercise
-              </button>
-              <button
-                onClick={() => router.push(`/client/${id}/training/lower-body/add`)}
-                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
-              >
-                Add Lower Body Exercise
-              </button>
-              <button
-                onClick={() => router.push(`/client/${id}/training/full-body/add`)}
-                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
-              >
-                Add Full Body Exercise
-              </button>
-            </div>
-          </div>
-        )}
-
-        {isLoading ? (
-          // Loading Spinner
-          <div className="flex justify-center items-center h-64">
-            <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-[#ffa800] border-solid"></div>
-          </div>
+        {upperBodyExercises.length > 0 ? (
+          renderExerciseEntries(upperBodyExercises)
         ) : (
-          <div className="space-y-6 px-6 pb-6">
-            {/* Upper Body */}
-            <div>
-              <h2 className="text-xl font-semibold text-[#ffa800] mb-4">
-                Upper Body Exercises
-              </h2>
-              {upperbodyExercises.length > 0 ? (
-                upperbodyExercises.map((entry, index) => (
-                  <div key={index} className="mb-6">
-                    <h3 className="text-lg font-medium mb-2">
-                      Saved on: {new Date(entry.date).toLocaleDateString()}
-                    </h3>
-                    {renderExerciseTable(entry.exercises)}
-                  </div>
-                ))
-              ) : (
-                <p className="text-gray-500">No upper body exercises added yet.</p>
-              )}
-            </div>
+          <p className="text-gray-300">No upper body exercises recorded yet.</p>
+        )}
+      </div>
 
-            {/* Lower Body */}
-            <div>
-              <h2 className="text-xl font-semibold text-[#ffa800] mb-4">
-                Lower Body Exercises
-              </h2>
-              {lowerbodyExercises.length > 0 ? (
-                lowerbodyExercises.map((entry, index) => (
-                  <div key={index} className="mb-6">
-                    <h3 className="text-lg font-medium mb-2">
-                      Saved on: {new Date(entry.date).toLocaleDateString()}
-                    </h3>
-                    {renderExerciseTable(entry.exercises)}
-                  </div>
-                ))
-              ) : (
-                <p className="text-gray-500">No lower body exercises added yet.</p>
-              )}
-            </div>
+      {/* Lower Body Section */}
+      <div className="bg-[#2B2B2B] p-6 rounded shadow mb-8">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-xl font-semibold text-[#FFA800]">Lower Body Exercises</h2>
+          <AddExerciseButton label="Add Lower Body Exercises" navigateTo={`/client/${id}/training/lower-body`} />
+        </div>
+        {lowerBodyExercises.length > 0 ? (
+          renderExerciseEntries(lowerBodyExercises)
+        ) : (
+          <p className="text-gray-300">No lower body exercises recorded yet.</p>
+        )}
+      </div>
 
-            {/* Full Body */}
-            <div>
-              <h2 className="text-xl font-semibold text-[#ffa800] mb-4">
-                Full Body Exercises
-              </h2>
-              {fullbodyExercises.length > 0 ? (
-                fullbodyExercises.map((entry, index) => (
-                  <div key={index} className="mb-6">
-                    <h3 className="text-lg font-medium mb-2">
-                      Saved on: {new Date(entry.date).toLocaleDateString()}
-                    </h3>
-                    {renderExerciseTable(entry.exercises)}
-                  </div>
-                ))
-              ) : (
-                <p className="text-gray-500">No full body exercises added yet.</p>
-              )}
-            </div>
-          </div>
+      {/* Full Body Section */}
+      <div className="bg-[#2B2B2B] p-6 rounded shadow mb-8">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-xl font-semibold text-[#FFA800]">Full Body Exercises</h2>
+          <AddExerciseButton label="Add Full Body Exercises" navigateTo={`/client/${id}/training/full-body`} />
+        </div>
+        {fullBodyExercises.length > 0 ? (
+          renderExerciseEntries(fullBodyExercises)
+        ) : (
+          <p className="text-gray-300">No full body exercises recorded yet.</p>
         )}
       </div>
     </div>

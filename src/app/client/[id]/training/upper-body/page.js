@@ -1,142 +1,26 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
+import UpperBodyExercises from "../../../../components/UpperBodyExercises";
 
-const upperBodyExercises = {
-  Chest: [
-    "Bench Press",
-    "Incline Bench Press",
-    "Push-Ups",
-    "Chest Flys",
-    "Dips",
-    "Pec Deck",
-    "Cable Crossovers",
-  ],
-  Back: [
-    "Pull-Ups",
-    "Lat Pulldown",
-    "Barbell Rows",
-    "Deadlifts",
-    "Cable Rows",
-    "T-Bar Rows",
-    "Face Pulls",
-  ],
-  Shoulders: [
-    "Overhead Press",
-    "Lateral Raises",
-    "Front Raises",
-    "Arnold Press",
-    "Upright Rows",
-    "Rear Delt Flys",
-    "Shrugs",
-  ],
-  Biceps: [
-    "Barbell Curls",
-    "Dumbbell Curls",
-    "Preacher Curls",
-    "Cable Curls",
-    "Incline Curls",
-    "Chin-Ups",
-  ],
-  Triceps: [
-    "Tricep Dips",
-    "Close-Grip Bench Press",
-    "Overhead Extensions",
-    "Tricep Pushdowns",
-    "Skull Crushers",
-    "Diamond Push-Ups",
-  ],
-  Core: [
-    "Plank Taps",
-    "Hanging Leg Raises",
-    "Cable Woodchoppers",
-    "Ab Rollouts",
-    "Sit-Ups",
-  ],
-};
+export default function TrainingPage() {
+  const params = useParams();
+  const clientId = params?.id; // Dynamically fetch the client ID from the URL
 
+  console.log("Client ID from URL:", clientId);
 
-export default function UpperBodyPage({ params }) {
-  const { id } = params;
-  const router = useRouter();
-  const [selectedExercises, setSelectedExercises] = useState([]);
-
-  const handleToggleExercise = (exerciseName) => {
-    setSelectedExercises((prev) =>
-      prev.includes(exerciseName)
-        ? prev.filter((e) => e !== exerciseName)
-        : [...prev, exerciseName]
+  if (!clientId) {
+    return (
+      <div>
+        <p className="text-red-500">Error: Client ID is missing in the URL!</p>
+      </div>
     );
-  };
-
-  const handleAddSelected = async () => {
-    try {
-      const response = await fetch("/api/update-client-upperbody", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          id,
-          exercises: selectedExercises.map((name) => ({
-            name,
-            sets: 1, // Default sets
-            weight: 5, // Default weight
-            reps: 1, // Default reps
-          })),
-        }),
-      });
-
-      if (response.ok) {
-        router.push(`/client/${id}/training`); // Redirect to training page
-      } else {
-        const errorData = await response.json();
-        console.error("Error saving exercises:", errorData.error);
-        alert("Failed to save exercises.");
-      }
-    } catch (error) {
-      console.error("Error adding exercises:", error);
-      alert("An error occurred while adding exercises.");
-    }
-  };
+  }
 
   return (
-    <div className="max-w-7xl mx-auto mt-8">
-      <h1 className="text-2xl font-semibold mb-4">Upper Body Exercises</h1>
-      <div className="bg-gray-100 p-4 rounded shadow mb-6">
-        <h2 className="text-lg font-medium mb-4">Select Exercises</h2>
-        {Object.entries(upperBodyExercises).map(([muscleGroup, exercises]) => (
-          <div key={muscleGroup} className="mb-6">
-            <h3 className="text-lg font-semibold text-gray-800">{muscleGroup}</h3>
-            <ul className="space-y-2 mt-2">
-              {exercises.map((exercise, index) => (
-                <li key={index} className="flex items-center space-x-4">
-                  <input
-                    type="checkbox"
-                    id={`${muscleGroup}-${index}`}
-                    checked={selectedExercises.includes(exercise)}
-                    onChange={() => handleToggleExercise(exercise)}
-                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                  />
-                  <label
-                    htmlFor={`${muscleGroup}-${index}`}
-                    className="text-gray-700"
-                  >
-                    {exercise}
-                  </label>
-                </li>
-              ))}
-            </ul>
-          </div>
-        ))}
-      </div>
-      <button
-        onClick={handleAddSelected}
-        className="mt-6 bg-green-500 text-white py-2 px-6 rounded hover:bg-green-600 focus:ring-2 focus:ring-green-300"
-      >
-        Add Selected Exercises
-      </button>
+    <div>
+      <h1 className="text-xl font-bold mb-4">Training Page for Client {clientId}</h1>
+      <UpperBodyExercises clientId={clientId} />
     </div>
   );
 }

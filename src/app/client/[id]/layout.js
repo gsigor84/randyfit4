@@ -4,7 +4,9 @@ import { ObjectId } from "mongodb";
 import DeleteClientButton from "../[id]/delete-client-button";
 import { ClientProvider } from "../[id]/ClientContext";
 
-export default async function ClientLayout({ children, params }) {
+export default async function ClientLayout({ children, params: rawParams }) {
+  // Await params to ensure it's fully resolved
+  const params = await rawParams;
   const { id } = params;
 
   let client = null;

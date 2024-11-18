@@ -1,53 +1,70 @@
 import clientPromise from "../../../lib/mongodb";
 import { ObjectId } from "mongodb";
 
-export async function POST(req) {
+export async function POST(request) {
   try {
-    const { id, exercises } = await req.json();
+    // Parse the request body
+    const { id, groupedExercises } = await request.json();
 
-    if (!id || !Array.isArray(exercises) || exercises.length === 0) {
-      return new Response(
-        JSON.stringify({ success: false, error: "Invalid data" }),
-        { status: 400 }
-      );
+    // Validate the input
+    if (!id || !groupedExercises || !groupedExercises.exercises || groupedExercises.exercises.length === 0) {
+      return new Response(JSON.stringify({ error: "Invalid data provided" }), {
+        status: 400,
+        headers: { "Content-Type": "application/json" },
+      });
     }
 
+    // Connect to the database
     const client = await clientPromise;
     const db = client.db("your_database_name"); // Replace with your database name
+    const collection = db.collection("clients"); // Replace with your collection name
 
-    // Validate exercises to ensure they have all required fields
-    const validatedExercises = exercises.map((exercise) => ({
-      name: exercise.name || "Unnamed Exercise",
-      sets: exercise.sets || 1,
-      weight: exercise.weight || 5,
-      reps: exercise.reps || 1,
-    }));
+    // Convert the ID to an ObjectId
+    const clientObjectId = new ObjectId(id);
 
-    const result = await db.collection("clients").updateOne(
-      { _id: new ObjectId(id) },
-      {
-        $push: {
-          upperbody: {
-            exercises: validatedExercises,
-            date: new Date(),
-          },
-        },
-      }
+    // Fetch the client document
+    const clientDoc = await collection.findOne({ _id: clientObjectId });
+
+    if (!clientDoc) {
+      return new Response(JSON.stringify({ error: "Client not found" }), {
+        status: 404,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    // Append the grouped exercises to the `upperbody` array
+    const updatedUpperbody = clientDoc.upperbody
+      ? [...clientDoc.upperbody, groupedExercises]
+      : [groupedExercises];
+
+    // Update the document in the database
+    const updateResult = await collection.updateOne(
+      { _id: clientObjectId },
+      { $set: { upperbody: updatedUpperbody } }
     );
 
-    if (result.modifiedCount === 0) {
+    if (updateResult.modifiedCount === 0) {
       return new Response(
-        JSON.stringify({ success: false, error: "No client updated" }),
-        { status: 404 }
+        JSON.stringify({ error: "Failed to update exercises" }),
+        {
+          status: 500,
+          headers: { "Content-Type": "application/json" },
+        }
       );
     }
 
-    return new Response(JSON.stringify({ success: true }), { status: 200 });
-  } catch (error) {
-    console.error("Error updating client:", error);
     return new Response(
-      JSON.stringify({ success: false, error: error.message }),
-      { status: 500 }
+      JSON.stringify({ message: "Exercises updated successfully" }),
+      {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      }
     );
+  } catch (error) {
+    console.error("Error updating upper body exercises:", error);
+    return new Response(JSON.stringify({ error: "Internal Server Error" }), {
+      status: 500,
+      headers: { "Content-Type": "application/json" },
+    });
   }
 }
