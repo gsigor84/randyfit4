@@ -2,6 +2,7 @@
 
 import { useClient } from "../ClientContext";
 import { useState } from "react";
+import MacrosCalculator from "../../../components/MacrosCalculator";
 
 export default function MealPlanPage() {
   const client = useClient();
@@ -107,6 +108,7 @@ export default function MealPlanPage() {
 
   return (
     <div className="p-4">
+
       <h1 className="text-3xl font-bold text-white mb-6">Meal Plan</h1>
 
       {/* Add Meal Section */}

@@ -79,40 +79,57 @@ export default function WorkoutPage() {
         <p className="text-sm text-gray-300 mb-2">
           <strong>{day}:</strong>
         </p>
-        <table className="table-auto w-full text-sm text-left border-collapse">
-          <thead>
-            <tr className="bg-[#333] text-[#FFD700]">
-              <th className="px-4 py-2">Exercise Name</th>
-              <th className="px-4 py-2">Sets</th>
-              <th className="px-4 py-2">Weight (kg)</th>
-              <th className="px-4 py-2">Reps</th>
-            </tr>
-          </thead>
-          <tbody>
-            {workout.exercises.map((exercise, index) => (
-              <tr key={index} className="odd:bg-[#444] even:bg-[#333] hover:bg-[#555]">
-                <td className="px-4 py-2 text-white">{exercise.name}</td>
-                <td className="px-4 py-2 text-white">{exercise.sets}</td>
-                <td className="px-4 py-2 text-white">{exercise.weight}</td>
-                <td className="px-4 py-2 text-white">{exercise.reps}</td>
+        <div className="overflow-x-auto">
+          <table className="table-auto w-full text-sm text-left border-collapse">
+            <thead>
+              <tr className="bg-[#333] text-[#FFD700]">
+                <th className="px-2 sm:px-4 py-2">Exercise Name</th>
+                <th className="px-2 sm:px-4 py-2">Sets</th>
+                <th className="px-2 sm:px-4 py-2">Weight (kg)</th>
+                <th className="px-2 sm:px-4 py-2">Reps</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {workout.exercises.map((exercise, index) => (
+                <tr
+                  key={index}
+                  className="odd:bg-[#444] even:bg-[#333] hover:bg-[#555]"
+                >
+                  <td className="px-2 sm:px-4 py-2 text-white">
+                    {exercise.name}
+                  </td>
+                  <td className="px-2 sm:px-4 py-2 text-white">
+                    {exercise.sets}
+                  </td>
+                  <td className="px-2 sm:px-4 py-2 text-white">
+                    {exercise.weight}
+                  </td>
+                  <td className="px-2 sm:px-4 py-2 text-white">
+                    {exercise.reps}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     );
   };
 
   const renderCategory = (title, lastWorkoutsByDay) => (
-    <div className="bg-[#333] p-6 rounded-md shadow-lg mb-8">
-      <h2 className="text-2xl font-semibold text-[#FFD700] mb-4">{title}</h2>
+    <div className="bg-[#333] p-4 sm:p-6 rounded-md shadow-lg mb-8">
+      <h2 className="text-lg sm:text-2xl font-semibold text-[#FFD700] mb-4">
+        {title}
+      </h2>
       {daysOfWeek.map((day) => renderLastWorkoutForDay(day, lastWorkoutsByDay[day]))}
     </div>
   );
 
   return (
-    <div className="max-w-7xl mx-auto p-8 bg-[#222] rounded-lg shadow-lg">
-      <h1 className="text-4xl font-bold text-[#FFD700] mb-6 text-center">Training Overview</h1>
+    <div className="max-w-7xl mx-auto sm:p-8 ">
+      <h1 className="text-2xl sm:text-4xl font-bold text-[#FFD700] mb-6 text-center">
+        Training Overview
+      </h1>
 
       {/* Upper Body Section */}
       {renderCategory("Upper Body Exercises", lastUpperBodyWorkouts)}

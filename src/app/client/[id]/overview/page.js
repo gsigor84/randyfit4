@@ -65,7 +65,7 @@ export default function OverviewPage() {
   }
 
   return (
-    <div className="max-w-7xl mx-auto mt-8 p-6 bg-[#1c1c1c] rounded-lg shadow">
+    <div className="max-w-7xl mx-auto mt-8  bg-[#1c1c1c] rounded-lg shadow">
       <h1 className="text-3xl font-bold text-[#FFA800] mb-6">Client Overview</h1>
 
       {/* Display Last Workout Plan */}
