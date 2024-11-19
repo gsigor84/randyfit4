@@ -59,6 +59,13 @@ export default function TrainingPage() {
     );
   }
 
+  // Function to format date and return day of the week
+  const formatDateWithDay = (dateString) => {
+    const date = new Date(dateString);
+    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    return date.toLocaleDateString('en-US', options);
+  };
+
   const renderExerciseTable = (exercises) => (
     <table className="table-auto w-full text-sm text-left border-collapse border border-gray-700">
       <thead>
@@ -85,9 +92,9 @@ export default function TrainingPage() {
   const renderExerciseEntries = (entries) =>
     entries.map((entry, index) => (
       <div key={index} className="mb-6">
+        {/* Display only the day of the workout */}
         <p className="text-sm text-gray-300">
-          <strong>Saved on:</strong>{" "}
-          {entry.date ? new Date(entry.date).toLocaleDateString() : "N/A"}
+          <strong>Saved on:</strong> {entry.day || "N/A"}
         </p>
         {renderExerciseTable(entry.exercises || [entry])}
       </div>
@@ -101,7 +108,10 @@ export default function TrainingPage() {
       <div className="bg-[#2B2B2B] p-6 rounded shadow mb-8">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-semibold text-[#FFA800]">Upper Body Exercises</h2>
-          <AddExerciseButton label="Add Upper Body Exercises" navigateTo={`/client/${id}/training/upper-body`} />
+          <AddExerciseButton
+            label="Add Upper Body Exercises"
+            navigateTo={`/client/${id}/training/upper-body`}
+          />
         </div>
         {upperBodyExercises.length > 0 ? (
           renderExerciseEntries(upperBodyExercises)
@@ -114,7 +124,10 @@ export default function TrainingPage() {
       <div className="bg-[#2B2B2B] p-6 rounded shadow mb-8">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-semibold text-[#FFA800]">Lower Body Exercises</h2>
-          <AddExerciseButton label="Add Lower Body Exercises" navigateTo={`/client/${id}/training/lower-body`} />
+          <AddExerciseButton
+            label="Add Lower Body Exercises"
+            navigateTo={`/client/${id}/training/lower-body`}
+          />
         </div>
         {lowerBodyExercises.length > 0 ? (
           renderExerciseEntries(lowerBodyExercises)
@@ -127,7 +140,10 @@ export default function TrainingPage() {
       <div className="bg-[#2B2B2B] p-6 rounded shadow mb-8">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-semibold text-[#FFA800]">Full Body Exercises</h2>
-          <AddExerciseButton label="Add Full Body Exercises" navigateTo={`/client/${id}/training/full-body`} />
+          <AddExerciseButton
+            label="Add Full Body Exercises"
+            navigateTo={`/client/${id}/training/full-body`}
+          />
         </div>
         {fullBodyExercises.length > 0 ? (
           renderExerciseEntries(fullBodyExercises)

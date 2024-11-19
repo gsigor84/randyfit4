@@ -1,7 +1,8 @@
 "use client";
 
 import { useParams } from "next/navigation";
-import UpperBodyExercises from "../../../../components/UpperBodyExercises";
+import UpperBodyExercises from "../../../../components/FullBodyExercises";
+import FullBodyExercises from "../../../../components/FullBodyExercises";
 
 export default function TrainingPage() {
   const params = useParams();
@@ -22,7 +23,7 @@ export default function TrainingPage() {
       <h1 className="text-3xl font-bold text-[#FFA800] mb-6">Training Overview</h1>
 
       {/* Upper Body Exercises Section */}
-      <UpperBodyExercises clientId={clientId} />
+      <FullBodyExercises clientId={clientId} />
     </div>
   );
 }

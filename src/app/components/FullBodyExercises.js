@@ -18,7 +18,13 @@ const fullBodyExercises = {
 export default function FullBodyExercises({ clientId }) {
   const [selectedExercises, setSelectedExercises] = useState({});
   const [loading, setLoading] = useState(false);
+  const [selectedDay, setSelectedDay] = useState("Monday"); // Default to Monday
   const router = useRouter();
+
+  // Handle day selection
+  const handleDayChange = (e) => {
+    setSelectedDay(e.target.value);
+  };
 
   // Toggle exercise selection
   const toggleExercise = (exercise) => {
@@ -49,7 +55,8 @@ export default function FullBodyExercises({ clientId }) {
     }
 
     const groupedExercises = {
-      date: new Date().toISOString(), // Add the current date
+      day: selectedDay, // Include the day of the week
+      date: new Date().toISOString(),
       exercises: Object.entries(selectedExercises).map(([name, details]) => ({
         name,
         reps: details.reps,
@@ -57,8 +64,6 @@ export default function FullBodyExercises({ clientId }) {
         weight: details.weight,
       })),
     };
-
-    console.log("Payload being sent:", { id: clientId, groupedExercises });
 
     setLoading(true);
     try {
@@ -91,6 +96,27 @@ export default function FullBodyExercises({ clientId }) {
   return (
     <div className="bg-[#2B2B2B] p-6 rounded-lg shadow mb-8">
       <h2 className="text-xl font-bold text-[#FFA800] mb-4">Full Body Exercises</h2>
+
+      {/* Day Selection Dropdown */}
+      <div className="mb-4">
+        <label htmlFor="day" className="block text-gray-300">Select Day of the Week</label>
+        <select
+          id="day"
+          value={selectedDay}
+          onChange={handleDayChange}
+          className="border border-gray-600 text-white bg-gray-800 rounded p-2 w-full focus:ring-2 focus:ring-[#FFA800]"
+        >
+          <option value="Monday">Monday</option>
+          <option value="Tuesday">Tuesday</option>
+          <option value="Wednesday">Wednesday</option>
+          <option value="Thursday">Thursday</option>
+          <option value="Friday">Friday</option>
+          <option value="Saturday">Saturday</option>
+          <option value="Sunday">Sunday</option>
+        </select>
+      </div>
+
+      {/* Exercise List */}
       {Object.entries(fullBodyExercises).map(([muscleGroup, exercises]) => (
         <div key={muscleGroup} className="mb-6">
           <h3 className="text-lg font-semibold text-[#FFA800] mb-2">{muscleGroup}</h3>
@@ -148,6 +174,7 @@ export default function FullBodyExercises({ clientId }) {
           </ul>
         </div>
       ))}
+
       {/* Submit Button */}
       <button
         onClick={handleSubmit}

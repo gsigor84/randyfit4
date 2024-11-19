@@ -3,7 +3,6 @@ import { ObjectId } from "mongodb";
 
 export async function POST(request) {
   try {
-    // Parse the request body
     const { id, groupedExercises } = await request.json();
 
     // Validate the input
@@ -32,7 +31,7 @@ export async function POST(request) {
       });
     }
 
-    // Append the grouped exercises to the `upperbody` array
+    // Append the grouped exercises and selected day to the `upperbody` array
     const updatedUpperbody = clientDoc.upperbody
       ? [...clientDoc.upperbody, groupedExercises]
       : [groupedExercises];

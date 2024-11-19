@@ -11,7 +11,13 @@ const lowerBodyExercises = {
 export default function LowerBodyExercises({ clientId }) {
   const [selectedExercises, setSelectedExercises] = useState({});
   const [loading, setLoading] = useState(false);
+  const [selectedDay, setSelectedDay] = useState(""); // New state for day of the week
   const router = useRouter();
+
+  // Handle the change of day from the dropdown
+  const handleDayChange = (e) => {
+    setSelectedDay(e.target.value);
+  };
 
   // Toggle exercise selection
   const toggleExercise = (exercise) => {
@@ -36,12 +42,13 @@ export default function LowerBodyExercises({ clientId }) {
 
   // Submit selected exercises to the backend
   const handleSubmit = async () => {
-    if (!clientId || Object.keys(selectedExercises).length === 0) {
-      alert("Please select at least one exercise.");
+    if (!clientId || Object.keys(selectedExercises).length === 0 || !selectedDay) {
+      alert("Please select at least one exercise and a day.");
       return;
     }
 
     const groupedExercises = {
+      day: selectedDay, // Add the selected day
       date: new Date().toISOString(), // Add the current date
       exercises: Object.entries(selectedExercises).map(([name, details]) => ({
         name,
@@ -84,6 +91,28 @@ export default function LowerBodyExercises({ clientId }) {
   return (
     <div className="bg-[#2B2B2B] p-6 rounded-lg shadow mb-8">
       <h2 className="text-xl font-bold text-[#FFA800] mb-4">Lower Body Exercises</h2>
+
+      {/* Day of the week dropdown */}
+      <div className="mb-4">
+        <label htmlFor="day" className="text-gray-300">Select Day of the Week:</label>
+        <select
+          id="day"
+          value={selectedDay}
+          onChange={handleDayChange}
+          className="border border-gray-600 text-white bg-gray-800 rounded p-2 w-full focus:ring-2 focus:ring-[#FFA800]"
+        >
+          <option value="">--Select Day--</option>
+          <option value="Monday">Monday</option>
+          <option value="Tuesday">Tuesday</option>
+          <option value="Wednesday">Wednesday</option>
+          <option value="Thursday">Thursday</option>
+          <option value="Friday">Friday</option>
+          <option value="Saturday">Saturday</option>
+          <option value="Sunday">Sunday</option>
+        </select>
+      </div>
+
+      {/* Exercise selection */}
       {Object.entries(lowerBodyExercises).map(([muscleGroup, exercises]) => (
         <div key={muscleGroup} className="mb-6">
           <h3 className="text-lg font-semibold text-[#FFA800] mb-2">{muscleGroup}</h3>
