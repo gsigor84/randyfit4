@@ -118,6 +118,14 @@ export default async function ClientLayout({ children, params: rawParams }) {
               </li>
               <li>
                 <a
+                  href={`/client/${id}/edit-meal-plan`}
+                  className="text-[#ffa800] font-semibold hover:underline"
+                >
+                  Edit Meal Plan
+                </a>
+              </li>
+              <li>
+                <a
                   href={`/client/${id}/tasks`}
                   className="text-[#ffa800] font-semibold hover:underline"
                 >
