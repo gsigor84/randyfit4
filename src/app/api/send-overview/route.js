@@ -1,4 +1,4 @@
-import nodemailer from "nodemailer";
+import { Resend } from "resend";
 
 export async function POST(req) {
   try {
@@ -13,6 +13,8 @@ export async function POST(req) {
         }
       );
     }
+
+    const resend = new Resend(process.env.RESEND_API_KEY);
 
     // Format Workouts
     const formatWorkouts = (category, workouts) => {
@@ -107,35 +109,31 @@ export async function POST(req) {
       ${formatMealPlan(mealPlan)}
     `;
 
-    // Nodemailer transport
-    const transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
-      },
-    });
-
-    const mailOptions = {
-      from: process.env.EMAIL_USER,
+    // Send Email via Resend
+    const result = await resend.emails.send({
+      from: process.env.RESEND_FROM_EMAIL,
       to: email,
       subject: "Client Overview",
       html: emailContent,
-    };
-
-    await transporter.sendMail(mailOptions);
+    });
 
     return new Response(
-      JSON.stringify({ message: "Email sent successfully" }),
+      JSON.stringify({ message: "Email sent successfully", result }),
       {
         status: 200,
         headers: { "Content-Type": "application/json" },
       }
     );
   } catch (error) {
-    console.error("Error sending email:", error);
+    console.error("Error sending email:", {
+      message: error.message,
+      stack: error.stack,
+    });
     return new Response(
-      JSON.stringify({ error: "Internal Server Error" }),
+      JSON.stringify({
+        error: "Internal Server Error",
+        details: error.message,
+      }),
       {
         status: 500,
         headers: { "Content-Type": "application/json" },

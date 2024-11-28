@@ -36,7 +36,7 @@ export default function OverviewPage() {
   }, [clientId]);
 
   const handleSendEmail = async () => {
-    if (!email) {
+    if (!email.trim()) {
       alert("Please provide a valid email address.");
       return;
     }
@@ -54,11 +54,11 @@ export default function OverviewPage() {
         body: JSON.stringify({
           email,
           workoutPlan: {
-            upperbody: client.upperbody,
-            lowerbody: client.lowerbody,
-            fullbody: client.fullbody,
+            upperbody: client.upperbody || [],
+            lowerbody: client.lowerbody || [],
+            fullbody: client.fullbody || [],
           },
-          mealPlan: client.mealPlan,
+          mealPlan: client.mealPlan || [],
         }),
       });
 
@@ -66,6 +66,7 @@ export default function OverviewPage() {
         setMessage("Email sent successfully!");
       } else {
         const errorData = await response.json();
+        console.error("Error response from backend:", errorData);
         setMessage(`Error sending email: ${errorData.error}`);
       }
     } catch (error) {
