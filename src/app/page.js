@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Button, Card, CardBody, CardHeader, Spinner } from "@nextui-org/react";
+import { Button, Card, CardBody, CardHeader, Spinner } from "@heroui/react";
 
 export default function Home() {
   const [clients, setClients] = useState([]);

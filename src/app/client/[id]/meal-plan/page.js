@@ -10,7 +10,7 @@ import {
   Card,
   CardHeader,
   CardBody,
-} from "@nextui-org/react";
+} from "@heroui/react";
 
 export default function MealPlanPage() {
   const client = useClient();

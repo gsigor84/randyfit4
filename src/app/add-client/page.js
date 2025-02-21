@@ -10,7 +10,7 @@ import {
   Card,
   CardBody,
   CardHeader,
-} from "@nextui-org/react";
+} from "@heroui/react";
 
 export default function AddClientPage() {
   const [name, setName] = useState("");

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
-import { Card, CardBody, CardHeader, Spinner } from "@nextui-org/react";
+import { Card, CardBody, CardHeader, Spinner } from "@heroui/react";
 
 export default function ClientDetailsPage() {
   const { id } = useParams(); // Fix: Use useParams() instead of accessing params synchronously

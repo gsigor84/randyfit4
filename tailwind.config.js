@@ -1,5 +1,5 @@
 /** @type {import('tailwindcss').Config} */
-const { heroui } = require("@heroui/react"); // ✅ Correct import for HeroUI
+const { heroui } = require("@heroui/react"); // ✅ Import HeroUI Tailwind preset
 
 module.exports = {
   content: [
@@ -18,5 +18,5 @@ module.exports = {
       },
     },
   },
-  plugins: [heroui()], // ✅ Replace `nextui()` with `heroui()`
+  plugins: [heroui()],
 };

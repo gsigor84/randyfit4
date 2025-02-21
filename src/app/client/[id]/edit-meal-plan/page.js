@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
-import { Button, Input, Card, CardBody, CardHeader } from "@nextui-org/react";
+import { Button, Input, Card, CardBody, CardHeader } from "@heroui/react";
 
 export default function EditMealPlanPage() {
   const params = useParams();
