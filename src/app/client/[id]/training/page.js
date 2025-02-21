@@ -68,7 +68,7 @@ export default function TrainingPage() {
         {entry.exercises?.map((exercise, idx) => (
           <div
             key={idx}
-            className="bg-white p-4 rounded-lg shadow-md border border-gray-300"
+            className="bg-white p-4 "
           >
             <p className="text-lg font-semibold text-[#010326]">{exercise.name}</p>
             <p className="text-gray-700 mt-2">
@@ -85,7 +85,7 @@ export default function TrainingPage() {
       <h1 className="text-3xl font-bold text-[#010326] mb-6">Training Overview</h1>
 
       {/* Upper Body Section */}
-      <div className="bg-[#F2F2F2] p-6 rounded-lg shadow mb-8 border border-gray-300">
+      <div >
         <div className="flex flex-col sm:flex-row sm:justify-between items-start sm:items-center mb-4">
           <h2 className="text-lg font-bold text-[#010326]">Upper Body Exercises</h2>
           <AddExerciseButton

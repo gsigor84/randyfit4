@@ -1,14 +1,16 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Button, Card, CardBody, CardHeader, Spinner } from "@heroui/react";
 
 export default function Home() {
   const [clients, setClients] = useState([]);
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const router = useRouter(); // ✅ Next.js navigation
 
+  // Fetch clients from API
   const fetchClients = async () => {
     try {
       setIsLoading(true);
@@ -57,12 +59,8 @@ export default function Home() {
     <div className="relative min-h-screen bg-white flex flex-col items-center py-20">
       {/* Title Section */}
       <div className="text-center mb-10">
-        <h1 className="text-5xl font-bold text-[#010326]">
-          Meet Your Clients
-        </h1>
-        <p className="text-gray-500 text-lg mt-2">
-          View and manage your clients in one place.
-        </p>
+        <h1 className="text-5xl font-bold text-[#010326]">Meet Your Clients</h1>
+        <p className="text-gray-500 text-lg mt-2">View and manage your clients in one place.</p>
       </div>
 
       {/* Clients Grid */}
@@ -71,7 +69,7 @@ export default function Home() {
           {clients.map((client) => (
             <Card
               key={client._id}
-              className="bg-white text-[#010326] shadow-md rounded-xl transition-all duration-300 transform hover:scale-105 border border-gray-300"
+              className="bg-white text-[#010326] shadow-md rounded-xl border border-gray-300"
             >
               <CardHeader className="p-6 border-b border-gray-300">
                 <h2 className="text-2xl font-semibold">{client.name}</h2>
@@ -85,15 +83,16 @@ export default function Home() {
                   Goal:{" "}
                   <span className="font-normal text-[#010326]">{client.goal}</span>
                 </p>
-                <Link href={`/client/${client._id}`} className="w-full">
-                  <Button
-                    color="primary"
-                    variant="solid"
-                    className="w-full rounded-lg text-lg py-3 bg-[#F25922] text-white hover:bg-[#cc4a1a]"
-                  >
-                    View Details
-                  </Button>
-                </Link>
+
+                {/* ✅ Keeping only the working button */}
+                <Button
+                  color="primary"
+                  variant="solid"
+                  className="w-full rounded-lg text-lg py-3 bg-[#07B0F2] text-white hover:bg-[#058ac5]"
+                  onPress={() => router.push(`/client/${client._id}`)} // ✅ FIXED
+                >
+                  View Details
+                </Button>
               </CardBody>
             </Card>
           ))}
