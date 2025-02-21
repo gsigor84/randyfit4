@@ -23,7 +23,7 @@ export default function UpperBodyExercises({ clientId }) {
   const toggleExercise = (exercise) => {
     setSelectedExercises((prev) => ({
       ...prev,
-      [exercise]: prev[exercise] ? undefined : { reps: 0, sets: 0, weight: 0 },
+      [exercise]: prev[exercise] ? undefined : { reps: "", sets: "", weight: "" },
     }));
   };
 
@@ -32,7 +32,7 @@ export default function UpperBodyExercises({ clientId }) {
       ...prev,
       [exercise]: {
         ...prev[exercise],
-        [field]: Math.max(0, parseInt(value) || 0),
+        [field]: value.replace(/\D/g, ""), // Allows only numbers
       },
     }));
   };
@@ -52,9 +52,9 @@ export default function UpperBodyExercises({ clientId }) {
       date: new Date().toISOString(),
       exercises: Object.entries(selectedExercises).map(([name, details]) => ({
         name,
-        reps: details.reps,
-        sets: details.sets,
-        weight: details.weight,
+        reps: details.reps || 0,
+        sets: details.sets || 0,
+        weight: details.weight || 0,
       })),
     };
 
@@ -124,7 +124,7 @@ export default function UpperBodyExercises({ clientId }) {
                     <div className="flex flex-col">
                       <label className="block text-gray-600 text-sm mb-1">Reps</label>
                       <input
-                        type="number"
+                        type="text"
                         placeholder="Reps"
                         value={selectedExercises[exercise].reps}
                         onChange={(e) => handleInputChange(exercise, "reps", e.target.value)}
@@ -134,7 +134,7 @@ export default function UpperBodyExercises({ clientId }) {
                     <div className="flex flex-col">
                       <label className="block text-gray-600 text-sm mb-1">Sets</label>
                       <input
-                        type="number"
+                        type="text"
                         placeholder="Sets"
                         value={selectedExercises[exercise].sets}
                         onChange={(e) => handleInputChange(exercise, "sets", e.target.value)}
@@ -144,7 +144,7 @@ export default function UpperBodyExercises({ clientId }) {
                     <div className="flex flex-col">
                       <label className="block text-gray-600 text-sm mb-1">Weight (kg)</label>
                       <input
-                        type="number"
+                        type="text"
                         placeholder="Weight"
                         value={selectedExercises[exercise].weight}
                         onChange={(e) => handleInputChange(exercise, "weight", e.target.value)}
@@ -168,6 +168,5 @@ export default function UpperBodyExercises({ clientId }) {
         {loading ? "Saving..." : "Save Exercises"}
       </button>
     </div>
-
   );
 }

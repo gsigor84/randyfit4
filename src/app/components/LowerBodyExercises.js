@@ -11,7 +11,7 @@ const lowerBodyExercises = {
 export default function LowerBodyExercises({ clientId }) {
   const [selectedExercises, setSelectedExercises] = useState({});
   const [loading, setLoading] = useState(false);
-  const [selectedDay, setSelectedDay] = useState(""); // New state for day of the week
+  const [selectedDay, setSelectedDay] = useState("");
   const router = useRouter();
 
   // Handle the change of day from the dropdown
@@ -25,7 +25,7 @@ export default function LowerBodyExercises({ clientId }) {
       ...prev,
       [exercise]: prev[exercise]
         ? undefined // Deselect if already selected
-        : { reps: 0, sets: 0, weight: 0 }, // Default values for a new selection
+        : { reps: "", sets: "", weight: "" }, // Now starts as an empty string
     }));
   };
 
@@ -35,7 +35,7 @@ export default function LowerBodyExercises({ clientId }) {
       ...prev,
       [exercise]: {
         ...prev[exercise],
-        [field]: Math.max(0, parseInt(value) || 0), // Prevent negative or invalid values
+        [field]: value.replace(/\D/g, ""), // Allows only numbers
       },
     }));
   };
@@ -48,13 +48,13 @@ export default function LowerBodyExercises({ clientId }) {
     }
 
     const groupedExercises = {
-      day: selectedDay, // Add the selected day
-      date: new Date().toISOString(), // Add the current date
+      day: selectedDay,
+      date: new Date().toISOString(),
       exercises: Object.entries(selectedExercises).map(([name, details]) => ({
         name,
-        reps: details.reps,
-        sets: details.sets,
-        weight: details.weight,
+        reps: details.reps || 0,
+        sets: details.sets || 0,
+        weight: details.weight || 0,
       })),
     };
 
@@ -92,7 +92,7 @@ export default function LowerBodyExercises({ clientId }) {
     <div className="bg-white p-6 rounded-lg shadow-lg">
       <h2 className="text-xl font-bold text-[#010326] mb-4">Lower Body Exercises</h2>
 
-      {/* Day of the Week Dropdown */}
+      {/* Day Selection */}
       <div className="mb-4">
         <label htmlFor="day" className="text-gray-700 text-lg font-semibold">Select Day of the Week:</label>
         <select
@@ -134,7 +134,7 @@ export default function LowerBodyExercises({ clientId }) {
                     <div className="flex flex-col">
                       <label className="block text-gray-600 text-sm mb-1">Reps</label>
                       <input
-                        type="number"
+                        type="text"
                         placeholder="Reps"
                         value={selectedExercises[exercise].reps}
                         onChange={(e) => handleInputChange(exercise, "reps", e.target.value)}
@@ -144,7 +144,7 @@ export default function LowerBodyExercises({ clientId }) {
                     <div className="flex flex-col">
                       <label className="block text-gray-600 text-sm mb-1">Sets</label>
                       <input
-                        type="number"
+                        type="text"
                         placeholder="Sets"
                         value={selectedExercises[exercise].sets}
                         onChange={(e) => handleInputChange(exercise, "sets", e.target.value)}
@@ -154,7 +154,7 @@ export default function LowerBodyExercises({ clientId }) {
                     <div className="flex flex-col">
                       <label className="block text-gray-600 text-sm mb-1">Weight (kg)</label>
                       <input
-                        type="number"
+                        type="text"
                         placeholder="Weight"
                         value={selectedExercises[exercise].weight}
                         onChange={(e) => handleInputChange(exercise, "weight", e.target.value)}
@@ -178,6 +178,5 @@ export default function LowerBodyExercises({ clientId }) {
         {loading ? "Saving..." : "Save Exercises"}
       </button>
     </div>
-
   );
 }

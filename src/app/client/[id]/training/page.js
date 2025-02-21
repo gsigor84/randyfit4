@@ -102,7 +102,7 @@ export default function TrainingPage() {
       </div>
 
       {/* Lower Body Section */}
-      <div className="bg-[#F2F2F2] p-6 rounded-lg shadow mb-8 border border-gray-300">
+      <div className=" mb-8 ">
         <div className="flex flex-col sm:flex-row sm:justify-between items-start sm:items-center mb-4">
           <h2 className="text-lg font-bold text-[#010326]">Lower Body Exercises</h2>
           <AddExerciseButton
@@ -119,7 +119,7 @@ export default function TrainingPage() {
       </div>
 
       {/* Full Body Section */}
-      <div className="bg-[#F2F2F2] p-6 rounded-lg shadow mb-8 border border-gray-300">
+      <div className="mb-8 ">
         <div className="flex flex-col sm:flex-row sm:justify-between items-start sm:items-center mb-4">
           <h2 className="text-lg font-bold text-[#010326]">Full Body Exercises</h2>
           <AddExerciseButton

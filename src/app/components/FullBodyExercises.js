@@ -32,7 +32,7 @@ export default function FullBodyExercises({ clientId }) {
       ...prev,
       [exercise]: prev[exercise]
         ? undefined // Deselect if already selected
-        : { reps: 0, sets: 0, weight: 0 }, // Default values for a new selection
+        : { reps: "", sets: "", weight: "" }, // Empty string instead of 0
     }));
   };
 
@@ -42,7 +42,7 @@ export default function FullBodyExercises({ clientId }) {
       ...prev,
       [exercise]: {
         ...prev[exercise],
-        [field]: Math.max(0, parseInt(value) || 0), // Prevent negative or invalid values
+        [field]: value === "" ? "" : Math.max(0, parseInt(value) || 0), // Allow empty input
       },
     }));
   };
@@ -59,9 +59,9 @@ export default function FullBodyExercises({ clientId }) {
       date: new Date().toISOString(),
       exercises: Object.entries(selectedExercises).map(([name, details]) => ({
         name,
-        reps: details.reps,
-        sets: details.sets,
-        weight: details.weight,
+        reps: details.reps || 0, // Convert empty fields to 0 before submission
+        sets: details.sets || 0,
+        weight: details.weight || 0,
       })),
     };
 
@@ -99,7 +99,9 @@ export default function FullBodyExercises({ clientId }) {
 
       {/* Day Selection Dropdown */}
       <div className="mb-4">
-        <label htmlFor="day" className="block text-gray-700 text-lg font-semibold">Select Day of the Week</label>
+        <label htmlFor="day" className="block text-gray-700 text-lg font-semibold">
+          Select Day of the Week
+        </label>
         <select
           id="day"
           value={selectedDay}
@@ -184,6 +186,5 @@ export default function FullBodyExercises({ clientId }) {
         {loading ? "Saving..." : "Save Exercises"}
       </button>
     </div>
-
   );
 }
