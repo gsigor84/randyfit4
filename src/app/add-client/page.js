@@ -2,6 +2,15 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import {
+  Button,
+  Input,
+  Select,
+  SelectItem,
+  Card,
+  CardBody,
+  CardHeader,
+} from "@nextui-org/react";
 
 export default function AddClientPage() {
   const [name, setName] = useState("");
@@ -19,9 +28,7 @@ export default function AddClientPage() {
     try {
       const response = await fetch("/api/add-client", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, age, gender, weight, height, experience, goal }),
       });
 
@@ -34,7 +41,7 @@ export default function AddClientPage() {
         setHeight("");
         setExperience("Beginner");
         setGoal("Losing Weight");
-        router.push("/"); // Redirect to the main page
+        router.push("/");
       } else {
         alert("Failed to add client.");
       }
@@ -45,127 +52,154 @@ export default function AddClientPage() {
   };
 
   return (
-    <div
-      className="relative min-h-screen p-4"
-      style={{
-        backgroundImage: `url('https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        backgroundRepeat: "no-repeat",
-      }}
-    >
-      {/* Overlay */}
-      <div className="absolute inset-0 bg-black opacity-80"></div>
+    <div className="min-h-screen bg-white flex flex-col items-center py-16 px-6">
+      {/* Page Title */}
+      <h1 className="text-4xl font-bold text-[#010326] text-center">
+        Add New Client
+      </h1>
+      <p className="text-[#07B0F2] text-center text-lg mt-2">
+        Fill out the form to create a new client profile.
+      </p>
 
-      {/* Content */}
-      <div className="relative max-w-lg mx-auto mt-8 p-6 bg-[#1c1c1c] text-white bg-opacity-90 rounded-lg">
-        <h1 className="text-3xl font-bold text-[#ffa800] mb-6 text-center">
-          Add New Client
-        </h1>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Name Field */}
-          <div>
-            <label className="block text-sm font-medium text-gray-300">Name</label>
-            <input
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
-              className="mt-1 block w-full rounded-md bg-gray-800 text-white border-gray-600 focus:ring-[#ffa800] focus:border-[#ffa800] shadow-sm"
-            />
-          </div>
+      {/* Form Card */}
+      <Card className="max-w-lg w-full mt-10 shadow-lg border border-gray-200 rounded-xl">
+        <CardHeader className="text-lg font-semibold text-[#010326] text-center border-b border-gray-200 px-6 py-6">
+          Client Information
+        </CardHeader>
 
-          {/* Age Field */}
-          <div>
-            <label className="block text-sm font-medium text-gray-300">Age</label>
-            <input
-              type="number"
-              value={age}
-              onChange={(e) => setAge(e.target.value)}
-              required
-              min="1"
-              className="mt-1 block w-full rounded-md bg-gray-800 text-white border-gray-600 focus:ring-[#ffa800] focus:border-[#ffa800] shadow-sm"
-            />
-          </div>
+        <CardBody className="p-8 space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Name Field */}
+            <div className="space-y-2">
+              <label className="block text-[#010326] font-semibold">
+                Name
+              </label>
+              <Input
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                isRequired
+                placeholder="Enter full name"
+                className="w-full"
+              />
+            </div>
 
-          {/* Gender Dropdown */}
-          <div>
-            <label className="block text-sm font-medium text-gray-300">Gender</label>
-            <select
-              value={gender}
-              onChange={(e) => setGender(e.target.value)}
-              className="mt-1 block w-full rounded-md bg-gray-800 text-white border-gray-600 focus:ring-[#ffa800] focus:border-[#ffa800] shadow-sm"
+            {/* Age Field */}
+            <div className="space-y-2">
+              <label className="block text-[#010326] font-semibold">
+                Age
+              </label>
+              <Input
+                type="number"
+                value={age}
+                onChange={(e) => setAge(e.target.value)}
+                isRequired
+                min="1"
+                placeholder="Enter age"
+                className="w-full"
+              />
+            </div>
+
+            {/* Gender Dropdown */}
+            <div className="space-y-2">
+              <label className="block text-[#010326] font-semibold">
+                Gender
+              </label>
+              <Select
+                selectedKeys={[gender]}
+                onSelectionChange={(keys) => setGender([...keys][0])}
+                className="w-full bg-white text-black rounded-lg"
+                popoverProps={{
+                  className: "bg-white text-black shadow-md rounded-lg",
+                }}
+              >
+                <SelectItem key="Male">Male</SelectItem>
+                <SelectItem key="Female">Female</SelectItem>
+              </Select>
+            </div>
+
+            {/* Weight Field */}
+            <div className="space-y-2">
+              <label className="block text-[#010326] font-semibold">
+                Weight (kg)
+              </label>
+              <Input
+                type="number"
+                value={weight}
+                onChange={(e) => setWeight(e.target.value)}
+                isRequired
+                min="1"
+                step="0.1"
+                placeholder="Enter weight in kg"
+                className="w-full"
+              />
+            </div>
+
+            {/* Height Field */}
+            <div className="space-y-2">
+              <label className="block text-[#010326] font-semibold">
+                Height (cm)
+              </label>
+              <Input
+                type="number"
+                value={height}
+                onChange={(e) => setHeight(e.target.value)}
+                isRequired
+                min="1"
+                step="0.1"
+                placeholder="Enter height in cm"
+                className="w-full"
+              />
+            </div>
+
+            {/* Experience Level Dropdown */}
+            <div className="space-y-2">
+              <label className="block text-[#010326] font-semibold">
+                Experience Level
+              </label>
+              <Select
+                selectedKeys={[experience]}
+                onSelectionChange={(keys) => setExperience([...keys][0])}
+                className="w-full bg-white text-black rounded-lg"
+                popoverProps={{
+                  className: "bg-white text-black shadow-md rounded-lg",
+                }}
+              >
+                <SelectItem key="Beginner">Beginner</SelectItem>
+                <SelectItem key="Intermediate">Intermediate</SelectItem>
+                <SelectItem key="Advanced">Advanced</SelectItem>
+              </Select>
+            </div>
+
+            {/* Training Goal Dropdown */}
+            <div className="space-y-2">
+              <label className="block text-[#010326] font-semibold">
+                Training Goal
+              </label>
+              <Select
+                selectedKeys={[goal]}
+                onSelectionChange={(keys) => setGoal([...keys][0])}
+                className="w-full bg-white text-black rounded-lg"
+                popoverProps={{
+                  className: "bg-white text-black shadow-md rounded-lg",
+                }}
+              >
+                <SelectItem key="Losing Weight">Losing Weight</SelectItem>
+                <SelectItem key="Gaining Muscle">Gaining Muscle</SelectItem>
+                <SelectItem key="Competing">Competing</SelectItem>
+              </Select>
+            </div>
+
+            {/* Submit Button */}
+            <Button
+              type="submit"
+              className="w-full bg-[#F25922] text-white font-semibold py-3 rounded-lg hover:bg-[#cc4a1a] transition-all"
             >
-              <option>Male</option>
-              <option>Female</option>
-            </select>
-          </div>
-
-          {/* Weight Field */}
-          <div>
-            <label className="block text-sm font-medium text-gray-300">Weight (kg)</label>
-            <input
-              type="number"
-              value={weight}
-              onChange={(e) => setWeight(e.target.value)}
-              required
-              min="1"
-              step="0.1"
-              className="mt-1 block w-full rounded-md bg-gray-800 text-white border-gray-600 focus:ring-[#ffa800] focus:border-[#ffa800] shadow-sm"
-            />
-          </div>
-
-          {/* Height Field */}
-          <div>
-            <label className="block text-sm font-medium text-gray-300">Height (cm)</label>
-            <input
-              type="number"
-              value={height}
-              onChange={(e) => setHeight(e.target.value)}
-              required
-              min="1"
-              step="0.1"
-              className="mt-1 block w-full rounded-md bg-gray-800 text-white border-gray-600 focus:ring-[#ffa800] focus:border-[#ffa800] shadow-sm"
-            />
-          </div>
-
-          {/* Experience Level Dropdown */}
-          <div>
-            <label className="block text-sm font-medium text-gray-300">Experience Level</label>
-            <select
-              value={experience}
-              onChange={(e) => setExperience(e.target.value)}
-              className="mt-1 block w-full rounded-md bg-gray-800 text-white border-gray-600 focus:ring-[#ffa800] focus:border-[#ffa800] shadow-sm"
-            >
-              <option>Beginner</option>
-              <option>Intermediate</option>
-              <option>Advanced</option>
-            </select>
-          </div>
-
-          {/* Training Goal Dropdown */}
-          <div>
-            <label className="block text-sm font-medium text-gray-300">Training Goal</label>
-            <select
-              value={goal}
-              onChange={(e) => setGoal(e.target.value)}
-              className="mt-1 block w-full rounded-md bg-gray-800 text-white border-gray-600 focus:ring-[#ffa800] focus:border-[#ffa800] shadow-sm"
-            >
-              <option>Losing Weight</option>
-              <option>Gaining Muscle</option>
-              <option>Competing</option>
-            </select>
-          </div>
-
-          {/* Submit Button */}
-          <button
-            type="submit"
-            className="w-full bg-[#ffa800] text-black font-semibold py-2 px-4 rounded hover:bg-[#cc8400] focus:ring-2 focus:ring-[#ffa800]"
-          >
-            Add Client
-          </button>
-        </form>
-      </div>
+              Add Client
+            </Button>
+          </form>
+        </CardBody>
+      </Card>
     </div>
   );
 }

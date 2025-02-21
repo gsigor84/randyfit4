@@ -2,7 +2,15 @@
 
 import { useClient } from "../ClientContext";
 import { useState } from "react";
-import MacrosCalculator from "../../../components/MacrosCalculator";
+import {
+  Button,
+  Input,
+  Select,
+  SelectItem,
+  Card,
+  CardHeader,
+  CardBody,
+} from "@nextui-org/react";
 
 export default function MealPlanPage() {
   const client = useClient();
@@ -28,14 +36,8 @@ export default function MealPlanPage() {
   });
 
   const handleAddMeal = () => {
-    if (
-      !newMeal.name ||
-      !newMeal.calories ||
-      !newMeal.protein ||
-      !newMeal.carbs ||
-      !newMeal.fats
-    ) {
-      alert("Please fill out all fields for the meal.");
+    if (!newMeal.name || !newMeal.calories || !newMeal.protein || !newMeal.carbs || !newMeal.fats) {
+      alert("Please fill out all fields before adding a meal.");
       return;
     }
 
@@ -43,23 +45,12 @@ export default function MealPlanPage() {
       ...prevPlan,
       [newMeal.day]: {
         ...prevPlan[newMeal.day],
-        [newMeal.category]: [
-          ...prevPlan[newMeal.day][newMeal.category],
-          { ...newMeal },
-        ],
+        [newMeal.category]: [...prevPlan[newMeal.day][newMeal.category], { ...newMeal }],
       },
     }));
 
-    // Clear inputs
-    setNewMeal({
-      day: "Monday",
-      category: "Breakfast",
-      name: "",
-      calories: "",
-      protein: "",
-      carbs: "",
-      fats: "",
-    });
+    // Reset input fields
+    setNewMeal({ day: "Monday", category: "Breakfast", name: "", calories: "", protein: "", carbs: "", fats: "" });
   };
 
   const handleSaveMealPlan = async () => {
@@ -68,174 +59,140 @@ export default function MealPlanPage() {
       return;
     }
 
-    // Transform the mealPlan state into an array of day objects
     const formattedMealPlan = Object.keys(mealPlan).map((day) => ({
       day,
-      ...mealPlan[day], // Include Breakfast, Lunch, Dinner, Snacks
+      ...mealPlan[day],
     }));
-
-    console.log("Formatted mealPlan being sent:", formattedMealPlan);
 
     try {
       const response = await fetch("/api/mealplan", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          id: client._id,
-          mealPlan: formattedMealPlan,
-        }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: client._id, mealPlan: formattedMealPlan }),
       });
 
       if (!response.ok) {
         const errorData = await response.json();
-        console.error("Error saving meal plan:", errorData.error);
-        alert("Failed to save the meal plan: " + errorData.error);
+        alert("Failed to save the meal plan.");
         return;
       }
 
       alert("Meal plan saved successfully!");
     } catch (error) {
-      console.error("Error saving meal plan:", error);
       alert("An error occurred while saving the meal plan.");
     }
   };
 
   if (!client) {
-    return <p className="text-white">No client data found.</p>;
+    return <p className="text-gray-500 text-center mt-6">No client data found.</p>;
   }
 
   return (
-    <div className="p-4">
-
-      <h1 className="text-3xl font-bold text-white mb-6">Meal Plan</h1>
+    <div className="max-w-4xl mx-auto">
+      <h1 className="text-3xl font-bold text-[#010326] text-center mb-6">Meal Plan</h1>
 
       {/* Add Meal Section */}
-      <div className="p-4 bg-[#1c1c1c] rounded-md shadow-md mb-6">
-        <h2 className="text-2xl font-bold text-[#ffa800] mb-4">Add a Meal</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <select
-            value={newMeal.day}
-            onChange={(e) =>
-              setNewMeal((prev) => ({ ...prev, day: e.target.value }))
-            }
-            className="p-2 rounded-md bg-gray-800 text-white border border-gray-600 w-full"
-          >
-            {Object.keys(mealPlan).map((day) => (
-              <option key={day} value={day}>
-                {day}
-              </option>
-            ))}
-          </select>
-          <select
-            value={newMeal.category}
-            onChange={(e) =>
-              setNewMeal((prev) => ({ ...prev, category: e.target.value }))
-            }
-            className="p-2 rounded-md bg-gray-800 text-white border border-gray-600 w-full"
-          >
-            {["Breakfast", "Lunch", "Dinner", "Snacks"].map((category) => (
-              <option key={category} value={category}>
-                {category}
-              </option>
-            ))}
-          </select>
-          <input
-            type="text"
-            placeholder="Meal Name"
-            value={newMeal.name}
-            onChange={(e) =>
-              setNewMeal((prev) => ({ ...prev, name: e.target.value }))
-            }
-            className="p-2 rounded-md bg-gray-800 text-white border border-gray-600 w-full"
-          />
-          <input
-            type="number"
-            placeholder="Calories"
-            value={newMeal.calories}
-            onChange={(e) =>
-              setNewMeal((prev) => ({ ...prev, calories: e.target.value }))
-            }
-            className="p-2 rounded-md bg-gray-800 text-white border border-gray-600 w-full"
-          />
-          <input
-            type="number"
-            placeholder="Protein (g)"
-            value={newMeal.protein}
-            onChange={(e) =>
-              setNewMeal((prev) => ({ ...prev, protein: e.target.value }))
-            }
-            className="p-2 rounded-md bg-gray-800 text-white border border-gray-600 w-full"
-          />
-          <input
-            type="number"
-            placeholder="Carbs (g)"
-            value={newMeal.carbs}
-            onChange={(e) =>
-              setNewMeal((prev) => ({ ...prev, carbs: e.target.value }))
-            }
-            className="p-2 rounded-md bg-gray-800 text-white border border-gray-600 w-full"
-          />
-          <input
-            type="number"
-            placeholder="Fats (g)"
-            value={newMeal.fats}
-            onChange={(e) =>
-              setNewMeal((prev) => ({ ...prev, fats: e.target.value }))
-            }
-            className="p-2 rounded-md bg-gray-800 text-white border border-gray-600 w-full"
-          />
-        </div>
-        <button
-          onClick={handleAddMeal}
-          className="mt-4 bg-[#ffa800] text-black font-semibold py-2 px-4 rounded hover:bg-[#cc8400] focus:ring-2 focus:ring-[#ffa800]"
-        >
-          Add Meal
-        </button>
-      </div>
+      <Card className="mb-6 shadow-md">
+        <CardHeader className="bg-[#07B0F2] text-white text-xl font-semibold p-4 rounded-t-md">
+          Add a Meal
+        </CardHeader>
 
-      {/* Display Meal Plan */}
-      <div className="space-y-6">
-        {Object.keys(mealPlan).map((day) => (
-          <div key={day} className="p-4 bg-[#1c1c1c] rounded-md shadow-md">
-            <h2 className="text-2xl font-bold text-[#ffa800] mb-4">{day}</h2>
-            {["Breakfast", "Lunch", "Dinner", "Snacks"].map((category) => (
-              <div key={category} className="mb-4">
-                <h3 className="text-xl font-semibold text-white">{category}</h3>
-                {mealPlan[day][category].length > 0 ? (
-                  mealPlan[day][category].map((meal, index) => (
-                    <div
-                      key={index}
-                      className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-2 bg-gray-800 rounded-md space-y-2 sm:space-y-0"
-                    >
-                      <div>
-                        <p className="text-sm text-white font-bold">
-                          {meal.name}
-                        </p>
-                        <p className="text-sm text-white">
-                          {meal.calories} kcal | Protein: {meal.protein}g | Carbs:{" "}
-                          {meal.carbs}g | Fats: {meal.fats}g
-                        </p>
-                      </div>
-                    </div>
-                  ))
-                ) : (
-                  <p className="text-gray-400">No meals added yet.</p>
-                )}
+        <CardBody className="p-6 space-y-4">
+          {/* Select Inputs for Day & Category */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Day Dropdown */}
+            <div className="relative w-full">
+              <label className="text-gray-600 text-sm mb-1">Day</label>
+              <Select
+                selectedKeys={[newMeal.day]}
+                onChange={(e) => setNewMeal((prev) => ({ ...prev, day: e.target.value }))}
+                className="w-full bg-white text-black border border-gray-300 rounded-lg p-3 shadow-md text-lg cursor-pointer"
+              >
+                {Object.keys(mealPlan).map((day) => (
+                  <SelectItem key={day} value={day} className="p-4 text-black bg-white hover:bg-gray-100 text-lg">
+                    {day}
+                  </SelectItem>
+                ))}
+              </Select>
+            </div>
+
+            {/* Meal Category Dropdown */}
+            <div className="relative w-full">
+              <label className="text-gray-600 text-sm mb-1">Meal</label>
+              <Select
+                selectedKeys={[newMeal.category]}
+                onChange={(e) => setNewMeal((prev) => ({ ...prev, category: e.target.value }))}
+                className="w-full bg-white text-black border border-gray-300 rounded-lg p-3 shadow-md text-lg cursor-pointer"
+              >
+                {["Breakfast", "Lunch", "Dinner", "Snacks"].map((category) => (
+                  <SelectItem key={category} value={category} className="p-4 text-black bg-white hover:bg-gray-100 text-lg">
+                    {category}
+                  </SelectItem>
+                ))}
+              </Select>
+            </div>
+          </div>
+
+          {/* Meal Input Fields */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+            {["name", "calories", "protein", "carbs", "fats"].map((field, index) => (
+              <div key={index} className="flex flex-col">
+                <label className="text-gray-600 text-sm">{field.charAt(0).toUpperCase() + field.slice(1)}</label>
+                <Input
+                  type="text"
+                  placeholder={`Enter ${field}`}
+                  value={newMeal[field]}
+                  onChange={(e) => setNewMeal((prev) => ({ ...prev, [field]: e.target.value }))}
+                  className="bg-white text-black text-lg w-full h-12 mt-1"
+                />
               </div>
             ))}
           </div>
+
+          {/* Add Meal Button */}
+          <Button
+            onClick={handleAddMeal}
+            className="bg-[#07B0F2] text-white w-full py-3 rounded-md hover:bg-[#005f9e] focus:ring-2 focus:ring-[#07B0F2]"
+          >
+            + Add Meal
+          </Button>
+        </CardBody>
+      </Card>
+
+      {/* Meal Plan Display */}
+      <div className="space-y-6">
+        {Object.keys(mealPlan).map((day) => (
+          <Card key={day} className="shadow-md">
+            <CardHeader className="bg-[#07B0F2] text-white text-xl font-semibold p-4 rounded-t-md">
+              {day}
+            </CardHeader>
+            <CardBody className="p-6 space-y-4">
+              {["Breakfast", "Lunch", "Dinner", "Snacks"].map((category) => (
+                <div key={category} className="mb-4">
+                  <h3 className="text-lg font-semibold text-[#010326]">{category}</h3>
+                  {mealPlan[day][category].length > 0 ? (
+                    mealPlan[day][category].map((meal, index) => (
+                      <p key={index} className="text-sm text-gray-700">
+                        {meal.name} - {meal.calories} kcal | Protein: {meal.protein}g | Carbs: {meal.carbs}g | Fats: {meal.fats}g
+                      </p>
+                    ))
+                  ) : (
+                    <p className="text-gray-400 text-sm">No meals added yet.</p>
+                  )}
+                </div>
+              ))}
+            </CardBody>
+          </Card>
         ))}
       </div>
 
-      {/* Save Meal Plan Button */}
-      <button
+      {/* Save Button */}
+      <Button
         onClick={handleSaveMealPlan}
-        className="mt-6 bg-[#ffa800] text-black py-2 px-6 rounded hover:bg-[#cc8400] focus:ring-2 focus:ring-[#ffa800]"
+        className="mt-6 w-full bg-[#0DA64F] text-white py-3 rounded-md hover:bg-[#097d3a]"
       >
         Save Meal Plan
-      </button>
+      </Button>
     </div>
   );
 }

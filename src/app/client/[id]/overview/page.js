@@ -24,7 +24,7 @@ export default function OverviewPage() {
         if (!res.ok) throw new Error("Failed to fetch client data");
 
         const data = await res.json();
-        setClient(data); // Save the client data
+        setClient(data);
       } catch (error) {
         console.error("Error fetching client data:", error);
       } finally {
@@ -63,68 +63,65 @@ export default function OverviewPage() {
       });
 
       if (response.ok) {
-        setMessage("Email sent successfully!");
+        setMessage("✅ Email sent successfully!");
       } else {
         const errorData = await response.json();
-        console.error("Error response from backend:", errorData);
-        setMessage(`Error sending email: ${errorData.error}`);
+        setMessage(`❌ Error: ${errorData.error}`);
       }
     } catch (error) {
       console.error("Error sending email:", error);
-      setMessage("Failed to send email.");
+      setMessage("❌ Failed to send email.");
     }
   };
 
   if (loading) {
     return (
-      <div className="max-w-7xl mx-auto mt-8 p-6 bg-[#1c1c1c] rounded-lg shadow">
-        <p className="text-white text-lg">Loading client data...</p>
+      <div className="max-w-4xl mx-auto mt-8 p-6 bg-white rounded-lg shadow border border-gray-300">
+        <p className="text-gray-700 text-lg">Loading client data...</p>
       </div>
     );
   }
 
   if (!client) {
     return (
-      <div className="max-w-7xl mx-auto mt-8 p-6 bg-[#1c1c1c] rounded-lg shadow">
+      <div className="max-w-4xl mx-auto mt-8 p-6 bg-white rounded-lg shadow border border-gray-300">
         <p className="text-red-500 text-lg font-semibold">
-          Error: No client data found!
+          ❌ Error: No client data found!
         </p>
       </div>
     );
   }
 
   return (
-    <div className="max-w-7xl mx-auto mt-8 p-6 bg-[#1c1c1c] rounded-lg shadow">
-      <h1 className="text-3xl font-bold text-[#FFA800] mb-6">Client Overview</h1>
+    <div className="max-w-4xl mx-auto mt-8">
+      <h1 className="text-3xl font-bold text-[#010326] mb-6">Client Overview</h1>
 
-      {/* Display Last Workout Plan */}
+      {/* Last Workout Plan */}
       <LastWorkoutPlan clientId={clientId} />
 
-      {/* Display Last Meal Plan */}
+      {/* Last Meal Plan */}
       <LastMealPlan mealPlan={client.mealPlan} />
 
-      {/* Email Input and Button */}
-      <div className="mt-8 bg-[#2b2b2b] p-4 rounded-md shadow">
-        <h2 className="text-xl font-semibold text-[#FFA800] mb-4">
-          Send Overview to Email
-        </h2>
+      {/* Email Input & Send Button */}
+      <div className="mt-8 bg-[#F2F2F2] p-4 rounded-lg shadow border border-gray-300">
+        <h2 className="text-xl font-semibold text-[#010326] mb-4">Send Overview to Email</h2>
         <div className="flex flex-col sm:flex-row items-center gap-4">
           <input
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="Enter recipient's email"
-            className="p-2 flex-1 rounded-md bg-gray-800 text-white border border-gray-600 w-full sm:w-auto focus:ring-2 focus:ring-[#ffa800]"
+            className="p-3 text-lg flex-1 rounded-lg border border-gray-300 w-full sm:w-auto focus:ring-2 focus:ring-[#07B0F2]"
           />
           <button
             onClick={handleSendEmail}
-            className="bg-[#ffa800] text-black font-semibold py-2 px-4 rounded hover:bg-[#cc8400] focus:ring-2 focus:ring-[#ffa800]"
+            className="bg-[#07B0F2] text-white font-semibold py-3 px-6 rounded-lg hover:bg-[#005f99] focus:ring-2 focus:ring-[#07B0F2] transition-all"
           >
-            Send Email
+            {message === "Sending..." ? "Sending..." : "Send Email"}
           </button>
         </div>
         {message && (
-          <p className={`mt-4 ${message.includes("success") ? "text-green-400" : "text-red-400"}`}>
+          <p className={`mt-4 ${message.includes("✅") ? "text-green-600" : "text-red-500"}`}>
             {message}
           </p>
         )}

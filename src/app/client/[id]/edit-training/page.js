@@ -40,17 +40,15 @@ export default function EditTrainingPage() {
     fetchTrainingData();
   }, [id]);
 
-  const handleInputChange = (type, index, field, value) => {
+  const handleInputChange = (type, entryIndex, exerciseIndex, key, value) => {
     setTrainingData((prev) => ({
       ...prev,
       [type]: prev[type].map((entry, i) =>
-        i === index
+        i === entryIndex
           ? {
             ...entry,
             exercises: entry.exercises.map((exercise, j) =>
-              j === field.index
-                ? { ...exercise, [field.key]: field.key === "name" ? value : parseInt(value) }
-                : exercise
+              j === exerciseIndex ? { ...exercise, [key]: key === "name" ? value : parseInt(value) } : exercise
             ),
           }
           : entry
@@ -83,7 +81,7 @@ export default function EditTrainingPage() {
   };
 
   if (loading) {
-    return <p className="text-center text-white">Loading...</p>;
+    return <p className="text-center text-gray-500">Loading...</p>;
   }
 
   if (error) {
@@ -92,82 +90,83 @@ export default function EditTrainingPage() {
 
   const renderTrainingSection = (title, type) => (
     <div className="mb-6">
-      <h2 className="text-2xl font-bold text-[#ffa800] mb-4">{title}</h2>
+      <h2 className="text-2xl font-bold text-[#010326] mb-4">{title}</h2>
       {trainingData[type].map((entry, entryIndex) => (
-        <div key={entryIndex} className="mb-4">
-          <p className="text-sm text-gray-300 mb-2">
+        <div key={entryIndex} className="mb-4 ">
+          <p className="text-sm font-semibold text-[#07B0F2] mb-2">
             <strong>Day:</strong> {entry.day || "N/A"}
           </p>
-          <table className="table-auto w-full text-sm border-collapse border border-gray-700">
-            <thead>
-              <tr className="bg-gray-800 text-gray-300">
-                <th className="border border-gray-600 px-2 py-1">Exercise Name</th>
-                <th className="border border-gray-600 px-2 py-1">Sets</th>
-                <th className="border border-gray-600 px-2 py-1">Weight (kg)</th>
-                <th className="border border-gray-600 px-2 py-1">Reps</th>
-              </tr>
-            </thead>
-            <tbody>
-              {entry.exercises.map((exercise, exerciseIndex) => (
-                <tr key={exerciseIndex} className="odd:bg-gray-700 even:bg-gray-800">
-                  <td className="border border-gray-600 px-2 py-1">
-                    <input
-                      type="text"
-                      value={exercise.name}
-                      onChange={(e) =>
-                        handleInputChange(type, entryIndex, { index: exerciseIndex, key: "name" }, e.target.value)
-                      }
-                      className="w-full bg-gray-900 text-white p-1 rounded"
-                    />
-                  </td>
-                  <td className="border border-gray-600 px-2 py-1">
+          <div className="space-y-4">
+            {entry.exercises.map((exercise, exerciseIndex) => (
+              <div key={exerciseIndex} className="bg-white p-4 rounded-lg shadow border border-gray-300">
+                {/* Exercise Name Input */}
+                <div className="mb-2">
+                  <label className="text-sm font-bold text-gray-600">Exercise Name</label>
+                  <input
+                    type="text"
+                    value={exercise.name}
+                    onChange={(e) =>
+                      handleInputChange(type, entryIndex, exerciseIndex, "name", e.target.value)
+                    }
+                    className="w-full border border-gray-300 rounded-md p-2 text-md"
+                  />
+                </div>
+
+                {/* Exercise Details (Sets, Weight, Reps) */}
+                <div className="grid grid-cols-3 gap-4 mt-2">
+                  <div className="flex flex-col">
+                    <label className="text-sm font-bold text-gray-600 mb-1">Sets</label>
                     <input
                       type="number"
                       value={exercise.sets}
                       onChange={(e) =>
-                        handleInputChange(type, entryIndex, { index: exerciseIndex, key: "sets" }, e.target.value)
+                        handleInputChange(type, entryIndex, exerciseIndex, "sets", e.target.value)
                       }
-                      className="w-full bg-gray-900 text-white p-1 rounded"
+                      className="w-full border border-gray-300 rounded-md p-2 h-10 text-md text-center"
                     />
-                  </td>
-                  <td className="border border-gray-600 px-2 py-1">
+                  </div>
+                  <div className="flex flex-col">
+                    <label className="text-sm font-bold text-gray-600 mb-1 whitespace-nowrap">
+                      Weight (kg)
+                    </label>
                     <input
                       type="number"
                       value={exercise.weight}
                       onChange={(e) =>
-                        handleInputChange(type, entryIndex, { index: exerciseIndex, key: "weight" }, e.target.value)
+                        handleInputChange(type, entryIndex, exerciseIndex, "weight", e.target.value)
                       }
-                      className="w-full bg-gray-900 text-white p-1 rounded"
+                      className="w-full border border-gray-300 rounded-md p-2 h-10 text-md text-center"
                     />
-                  </td>
-                  <td className="border border-gray-600 px-2 py-1">
+                  </div>
+                  <div className="flex flex-col">
+                    <label className="text-sm font-bold text-gray-600 mb-1">Reps</label>
                     <input
                       type="number"
                       value={exercise.reps}
                       onChange={(e) =>
-                        handleInputChange(type, entryIndex, { index: exerciseIndex, key: "reps" }, e.target.value)
+                        handleInputChange(type, entryIndex, exerciseIndex, "reps", e.target.value)
                       }
-                      className="w-full bg-gray-900 text-white p-1 rounded"
+                      className="w-full border border-gray-300 rounded-md p-2 h-10 text-md text-center"
                     />
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       ))}
     </div>
   );
 
   return (
-    <div className="max-w-7xl mx-auto p-6 bg-[#1c1c1c] rounded-md shadow-md">
-      <h1 className="text-3xl font-bold text-[#ffa800] mb-6">Edit Training</h1>
+    <div className="max-w-4xl mx-auto p-6 bg-white rounded-md shadow-md">
+      <h1 className="text-3xl font-bold text-[#010326] mb-6 text-center">Edit Training</h1>
       {renderTrainingSection("Upper Body Exercises", "upperbody")}
       {renderTrainingSection("Lower Body Exercises", "lowerbody")}
       {renderTrainingSection("Full Body Exercises", "fullbody")}
       <button
         onClick={handleSave}
-        className="mt-4 bg-[#ffa800] text-black font-semibold py-2 px-6 rounded hover:bg-[#cc8400]"
+        className="mt-4 w-full bg-[#0DA64F] text-white font-semibold py-3 px-6 rounded-md hover:bg-[#087f3a]"
       >
         Save Changes
       </button>

@@ -1,67 +1,123 @@
-import clientPromise from "../../../lib/mongodb";
-import { ObjectId } from "mongodb";
+"use client";
 
-export default async function ClientDetailsPage({ params }) {
-  const { id } = params;
-  let client = null;
-  let error = null;
+import { useState, useEffect } from "react";
+import { useParams } from "next/navigation";
+import { Card, CardBody, CardHeader, Spinner } from "@nextui-org/react";
 
-  try {
-    const clientConnection = await clientPromise;
-    const db = clientConnection.db("your_database_name");
-    client = await db.collection("clients").findOne({ _id: new ObjectId(id) });
+export default function ClientDetailsPage() {
+  const { id } = useParams(); // Fix: Use useParams() instead of accessing params synchronously
+  const [client, setClient] = useState(null);
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-    if (client) {
-      client._id = client._id.toString();
+  useEffect(() => {
+    if (!id) {
+      setError("No client ID provided.");
+      setLoading(false);
+      return;
     }
-  } catch (err) {
-    console.error("Error fetching client details:", err);
-    error = err.message || "Failed to load client details.";
+
+    const fetchClient = async () => {
+      try {
+        const response = await fetch(`/api/get-client?id=${id}`);
+        if (!response.ok) throw new Error("Failed to fetch client data.");
+
+        const data = await response.json();
+        setClient(data);
+      } catch (err) {
+        setError(err.message || "Failed to load client details.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchClient();
+  }, [id]);
+
+  if (loading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-white text-black">
+        <Spinner size="lg" color="warning" />
+      </div>
+    );
   }
 
   if (error) {
     return (
-      <div className="relative min-h-screen p-4 bg-black text-white">
-        <h1 className="text-3xl text-center mt-8">Error</h1>
-        <p className="text-center mt-4">{error}</p>
+      <div className="flex min-h-screen items-center justify-center bg-white text-black px-6">
+        <Card className="w-full max-w-md shadow-lg border border-gray-300 rounded-xl p-6">
+          <CardHeader className="text-xl font-semibold text-[#F25922] text-center border-b border-gray-200 pb-5 px-6">
+            Error
+          </CardHeader>
+          <CardBody className="px-6 py-5">
+            <p className="text-center text-gray-600">{error}</p>
+          </CardBody>
+        </Card>
       </div>
     );
   }
 
   if (!client) {
     return (
-      <div className="relative min-h-screen p-4 bg-black text-white">
-        <h1 className="text-3xl text-center mt-8">Client Not Found</h1>
-        <p className="text-center mt-4">
-          The client you're looking for doesn't exist.
-        </p>
+      <div className="flex min-h-screen items-center justify-center bg-white text-black px-6">
+        <Card className="w-full max-w-md shadow-lg border border-gray-300 rounded-xl p-6">
+          <CardHeader className="text-xl font-semibold text-[#F25922] text-center border-b border-gray-200 pb-5 px-6">
+            Client Not Found
+          </CardHeader>
+          <CardBody className="px-6 py-5">
+            <p className="text-center text-gray-600">
+              The client you're looking for doesn't exist.
+            </p>
+          </CardBody>
+        </Card>
       </div>
     );
   }
 
   return (
-    <div
-      className="relative min-h-screen p-4"
-      style={{
-        backgroundImage: `url('https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        backgroundRepeat: "no-repeat",
-      }}
-    >
-      {/* Overlay */}
-      <div className="absolute inset-0 bg-black opacity-80"></div>
-
-      {/* Content */}
-      <div className="relative max-w-4xl mx-auto mt-8 p-6 bg-[#1c1c1c] text-white bg-opacity-90 rounded-lg">
-        <h1 className="text-3xl font-bold text-[#ffa800] mb-4">
+    <div className="min-h-screen bg-white flex flex-col items-center py-10 px-4 sm:px-6">
+      {/* Client Info Card */}
+      <Card className="max-w-2xl w-full shadow-lg border border-gray-300 rounded-xl">
+        <CardHeader className="text-2xl font-bold text-[#010326] text-center border-b border-gray-200 px-6 py-6">
           Welcome, {client.name}!
-        </h1>
-        <p className="text-lg text-gray-300">
-          We’re thrilled to have you here! Let's get started on achieving your
-          goals.
-        </p>
-      </div>
+        </CardHeader>
+
+        <CardBody className="p-6 space-y-6">
+          <p className="text-lg text-[#010326] font-medium text-center leading-relaxed">
+            We’re thrilled to have you here! Let's get started on achieving your goals.
+          </p>
+
+          {/* Responsive Grid for Client Info */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-black text-lg">
+            <p>
+              <span className="font-semibold text-[#0DA64F]">Age:</span> {client.age}
+            </p>
+            <p>
+              <span className="font-semibold text-[#0DA64F]">Gender:</span> {client.gender}
+            </p>
+            <p>
+              <span className="font-semibold text-[#0DA64F]">Weight:</span> {client.weight} kg
+            </p>
+            <p>
+              <span className="font-semibold text-[#0DA64F]">Height:</span> {client.height} cm
+            </p>
+            <p>
+              <span className="font-semibold text-[#0DA64F]">Experience:</span> {client.experience}
+            </p>
+            <p>
+              <span className="font-semibold text-[#0DA64F]">Goal:</span> {client.goal}
+            </p>
+          </div>
+
+          {/* Delete Button with Better Tap Area */}
+          <div className="mt-6 flex justify-center">
+            <button className="w-full sm:w-auto bg-[#F25922] text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:bg-[#cc4a1a] transition-all text-lg">
+              Delete Client
+            </button>
+          </div>
+        </CardBody>
+      </Card>
     </div>
+
   );
 }

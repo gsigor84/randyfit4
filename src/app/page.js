@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { Button, Card, CardBody, CardHeader, Spinner } from "@nextui-org/react";
 
 export default function Home() {
   const [clients, setClients] = useState([]);
@@ -16,7 +17,7 @@ export default function Home() {
         throw new Error(`Failed to fetch clients. Status: ${response.status}`);
       }
       const data = await response.json();
-      setClients(data); // Update the client list
+      setClients(data);
     } catch (err) {
       console.error("Error fetching clients:", err.message);
       setError(err.message);
@@ -26,77 +27,82 @@ export default function Home() {
   };
 
   useEffect(() => {
-    fetchClients(); // Fetch clients when the page loads
+    fetchClients();
   }, []);
 
   if (isLoading) {
     return (
-      <div className="relative min-h-screen p-4 bg-black text-white flex items-center justify-center">
-        <p className="text-xl">Loading clients...</p>
+      <div className="flex min-h-screen items-center justify-center bg-white text-[#010326]">
+        <Spinner size="lg" color="primary" />
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="relative min-h-screen p-4 bg-black text-white">
-        <h1 className="text-3xl text-center mt-8">Error</h1>
-        <p className="text-center mt-4">{error}</p>
+      <div className="flex min-h-screen items-center justify-center bg-white text-[#010326]">
+        <Card className="w-full max-w-md bg-white shadow-lg border border-gray-200 rounded-lg">
+          <CardHeader className="text-xl text-center text-[#F25922] font-semibold">
+            Error
+          </CardHeader>
+          <CardBody>
+            <p className="text-center text-gray-600">{error}</p>
+          </CardBody>
+        </Card>
       </div>
     );
   }
 
   return (
-    <div
-      className="relative min-h-screen p-4"
-      style={{
-        backgroundImage: `url('https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        backgroundRepeat: "no-repeat",
-      }}
-    >
-      {/* Overlay */}
-      <div className="absolute inset-0 bg-black opacity-80"></div>
-
-      {/* Content */}
-      <div className="relative max-w-7xl mx-auto mt-8 p-6">
-        <h1 className="text-3xl font-bold text-[#ffa800] mb-6 text-center">
-          Clients
+    <div className="relative min-h-screen bg-white flex flex-col items-center py-20">
+      {/* Title Section */}
+      <div className="text-center mb-10">
+        <h1 className="text-5xl font-bold text-[#010326]">
+          Meet Your Clients
         </h1>
-        {clients.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {clients.map((client) => (
-              <div
-                key={client._id}
-                className="p-6 border border-gray-700 rounded-lg shadow-md bg-[#1c1c1c] text-white bg-opacity-90"
-              >
-                <h2 className="text-xl font-semibold text-[#ffa800] mb-2">
-                  {client.name}
-                </h2>
-                <p className="text-sm">
-                  <span className="font-bold text-gray-300">Experience:</span>{" "}
-                  {client.experience}
-                </p>
-                <p className="text-sm mb-4">
-                  <span className="font-bold text-gray-300">Goal:</span>{" "}
-                  {client.goal}
-                </p>
-                <Link
-                  href={`/client/${client._id}`}
-                  className="text-[#ffa800] hover:underline font-semibold"
-                >
-                  View Details
-                </Link>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <p className="text-gray-400 text-center">
-            No clients found. Start adding clients!
-          </p>
-        )}
+        <p className="text-gray-500 text-lg mt-2">
+          View and manage your clients in one place.
+        </p>
       </div>
+
+      {/* Clients Grid */}
+      {clients.length > 0 ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 max-w-6xl w-full px-6">
+          {clients.map((client) => (
+            <Card
+              key={client._id}
+              className="bg-white text-[#010326] shadow-md rounded-xl transition-all duration-300 transform hover:scale-105 border border-gray-300"
+            >
+              <CardHeader className="p-6 border-b border-gray-300">
+                <h2 className="text-2xl font-semibold">{client.name}</h2>
+              </CardHeader>
+              <CardBody className="p-6">
+                <p className="text-sm text-gray-600 font-semibold">
+                  Experience:{" "}
+                  <span className="font-normal text-[#010326]">{client.experience}</span>
+                </p>
+                <p className="text-sm text-gray-600 font-semibold mb-4">
+                  Goal:{" "}
+                  <span className="font-normal text-[#010326]">{client.goal}</span>
+                </p>
+                <Link href={`/client/${client._id}`} className="w-full">
+                  <Button
+                    color="primary"
+                    variant="solid"
+                    className="w-full rounded-lg text-lg py-3 bg-[#F25922] text-white hover:bg-[#cc4a1a]"
+                  >
+                    View Details
+                  </Button>
+                </Link>
+              </CardBody>
+            </Card>
+          ))}
+        </div>
+      ) : (
+        <p className="text-gray-500 text-center text-lg mt-10">
+          No clients found. Start adding clients!
+        </p>
+      )}
     </div>
   );
 }

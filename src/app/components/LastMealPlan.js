@@ -5,26 +5,28 @@ export default function LastMealPlan({ mealPlan }) {
   const lastSevenPlans = Array.isArray(mealPlan) ? mealPlan.slice(-7) : [];
 
   return (
-    <div className="bg-[#1c1c1c] p-4 rounded-lg shadow-md">
-      <h2 className="text-2xl font-bold text-[#ffa800] mb-4">Last Meal Plan</h2>
+    <div className="bg-white  ">
+      <h2 className="text-2xl font-bold text-[#010326] mb-4 text-center">Last Meal Plan</h2>
+
+
       <div className="space-y-6">
         {lastSevenPlans.length > 0 ? (
           lastSevenPlans.map((plan, index) => (
-            <div key={index} className="p-4 bg-gray-800 rounded-md">
-              <h3 className="text-lg font-semibold text-[#ffa800] mb-2">
-                Day: {plan.day || "Unknown"}
+            <div key={index} className="p-4 bg-[#F2F2F2] rounded-md border border-gray-300">
+              <h3 className="text-lg font-semibold text-[#07B0F2] mb-2">
+                {plan.day || "Unknown"}
               </h3>
+
               <div className="space-y-2">
                 {["Breakfast", "Lunch", "Dinner", "Snacks"].map((mealType) => (
-                  <div key={mealType}>
-                    <p className="text-sm text-gray-400 font-bold">{mealType}:</p>
+                  <div key={mealType} className="mb-2">
+                    <p className="text-md font-semibold text-[#010326]">{mealType}:</p>
                     {plan[mealType] && plan[mealType].length > 0 ? (
-                      <ul className="list-disc pl-5 text-sm text-gray-300">
+                      <ul className="list-disc pl-5 text-sm text-gray-700">
                         {plan[mealType].map((meal, mealIndex) => (
-                          <li key={mealIndex}>
-                            {meal.name} - {meal.calories} kcal | Protein:{" "}
-                            {meal.protein}g | Carbs: {meal.carbs}g | Fats:{" "}
-                            {meal.fats}g
+                          <li key={mealIndex} className="py-1">
+                            <span className="font-semibold">{meal.name}</span> - {meal.calories} kcal |
+                            Protein: {meal.protein}g | Carbs: {meal.carbs}g | Fats: {meal.fats}g
                           </li>
                         ))}
                       </ul>
@@ -37,7 +39,7 @@ export default function LastMealPlan({ mealPlan }) {
             </div>
           ))
         ) : (
-          <p className="text-gray-400">No valid meal plans available.</p>
+          <p className="text-gray-500 text-center">No meal plans available.</p>
         )}
       </div>
     </div>

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
+import { Button, Input, Card, CardBody, CardHeader } from "@nextui-org/react";
 
 export default function EditMealPlanPage() {
   const params = useParams();
@@ -98,104 +99,98 @@ export default function EditMealPlanPage() {
   };
 
   if (loading) {
-    return <p className="text-white">Loading...</p>;
+    return (
+      <div className="flex min-h-screen items-center justify-center text-[#07B0F2]">
+        <p>Loading meal plan...</p>
+      </div>
+    );
   }
 
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-[#1c1c1c] rounded-md shadow-md text-white">
-      <h1 className="text-3xl font-bold text-[#ffa800] mb-6">Edit Meal Plan</h1>
+    <div className="max-w-4xl mx-auto p-6 bg-white rounded-md shadow-md">
+      <h1 className="text-3xl font-bold text-[#010326] text-center mb-6">Edit Meal Plan</h1>
 
       {mealPlan.map((dayPlan) => (
-        <div key={dayPlan.day} className="mb-6">
-          <h2 className="text-2xl font-bold text-[#ffa800]">{dayPlan.day}</h2>
+        <Card key={dayPlan.day} className="mb-6 shadow-md border border-gray-200">
+          <CardHeader className="bg-[#07B0F2] text-white text-xl font-semibold p-4 rounded-t-md">
+            {dayPlan.day}
+          </CardHeader>
+          <CardBody className="p-6 space-y-6">
+            {["Breakfast", "Lunch", "Dinner", "Snacks"].map((category) => (
+              <div key={category} className="mb-4">
+                <h3 className="text-lg font-semibold text-[#010326] mb-2">{category}</h3>
 
-          {["Breakfast", "Lunch", "Dinner", "Snacks"].map((category) => (
-            <div key={category} className="mb-4">
-              <h3 className="text-xl font-semibold text-gray-300">{category}</h3>
+                {/* Existing Meals */}
+                {dayPlan[category]?.length > 0 ? (
+                  dayPlan[category].map((meal, index) => (
+                    <div key={index} className="grid grid-cols-1 md:grid-cols-6 gap-4 mb-2 items-center">
+                      <Input
+                        type="text"
+                        placeholder="Meal Name"
+                        value={meal.name}
+                        onChange={(e) => handleInputChange(dayPlan.day, category, index, "name", e.target.value)}
+                        className="p-2 rounded-md border border-gray-300"
+                      />
+                      <Input
+                        type="number"
+                        placeholder="Calories"
+                        value={meal.calories}
+                        onChange={(e) => handleInputChange(dayPlan.day, category, index, "calories", e.target.value)}
+                        className="p-2 rounded-md border border-gray-300"
+                      />
+                      <Input
+                        type="number"
+                        placeholder="Protein (g)"
+                        value={meal.protein}
+                        onChange={(e) => handleInputChange(dayPlan.day, category, index, "protein", e.target.value)}
+                        className="p-2 rounded-md border border-gray-300"
+                      />
+                      <Input
+                        type="number"
+                        placeholder="Carbs (g)"
+                        value={meal.carbs}
+                        onChange={(e) => handleInputChange(dayPlan.day, category, index, "carbs", e.target.value)}
+                        className="p-2 rounded-md border border-gray-300"
+                      />
+                      <Input
+                        type="number"
+                        placeholder="Fats (g)"
+                        value={meal.fats}
+                        onChange={(e) => handleInputChange(dayPlan.day, category, index, "fats", e.target.value)}
+                        className="p-2 rounded-md border border-gray-300"
+                      />
+                      <Button
+                        onClick={() => handleDeleteMeal(dayPlan.day, category, index)}
+                        className="bg-red-500 text-white px-3 py-2 rounded-md hover:bg-red-700"
+                      >
+                        Delete
+                      </Button>
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-gray-400 text-sm">No meals added yet.</p>
+                )}
 
-              {/* Existing Meals */}
-              {dayPlan[category]?.length > 0 ? (
-                dayPlan[category].map((meal, index) => (
-                  <div
-                    key={index}
-                    className="grid grid-cols-1 sm:grid-cols-6 gap-4 mb-2 items-center"
-                  >
-                    <input
-                      type="text"
-                      placeholder="Meal Name"
-                      value={meal.name}
-                      onChange={(e) =>
-                        handleInputChange(dayPlan.day, category, index, "name", e.target.value)
-                      }
-                      className="p-2 rounded-md bg-gray-800 text-white border border-gray-600"
-                    />
-                    <input
-                      type="number"
-                      placeholder="Calories"
-                      value={meal.calories}
-                      onChange={(e) =>
-                        handleInputChange(dayPlan.day, category, index, "calories", e.target.value)
-                      }
-                      className="p-2 rounded-md bg-gray-800 text-white border border-gray-600"
-                    />
-                    <input
-                      type="number"
-                      placeholder="Protein (g)"
-                      value={meal.protein}
-                      onChange={(e) =>
-                        handleInputChange(dayPlan.day, category, index, "protein", e.target.value)
-                      }
-                      className="p-2 rounded-md bg-gray-800 text-white border border-gray-600"
-                    />
-                    <input
-                      type="number"
-                      placeholder="Carbs (g)"
-                      value={meal.carbs}
-                      onChange={(e) =>
-                        handleInputChange(dayPlan.day, category, index, "carbs", e.target.value)
-                      }
-                      className="p-2 rounded-md bg-gray-800 text-white border border-gray-600"
-                    />
-                    <input
-                      type="number"
-                      placeholder="Fats (g)"
-                      value={meal.fats}
-                      onChange={(e) =>
-                        handleInputChange(dayPlan.day, category, index, "fats", e.target.value)
-                      }
-                      className="p-2 rounded-md bg-gray-800 text-white border border-gray-600"
-                    />
-                    <button
-                      onClick={() => handleDeleteMeal(dayPlan.day, category, index)}
-                      className="text-red-500 hover:text-red-700"
-                    >
-                      🗑️
-                    </button>
-                  </div>
-                ))
-              ) : (
-                <p className="text-gray-400">No meals for this category.</p>
-              )}
-
-              {/* Add Meal Button */}
-              <button
-                onClick={() => handleAddMeal(dayPlan.day, category)}
-                className="text-sm text-[#ffa800] hover:underline mt-2"
-              >
-                + Add Meal
-              </button>
-            </div>
-          ))}
-        </div>
+                {/* Add Meal Button */}
+                <Button
+                  onClick={() => handleAddMeal(dayPlan.day, category)}
+                  className="text-sm bg-[#07B0F2] text-white px-3 py-2 rounded-md hover:bg-[#005f9e] mt-2"
+                >
+                  + Add Meal
+                </Button>
+              </div>
+            ))}
+          </CardBody>
+        </Card>
       ))}
 
       {/* Save Button */}
-      <button
+      <Button
         onClick={handleSave}
-        className="mt-4 w-full bg-[#ffa800] text-black py-2 px-4 rounded hover:bg-[#cc8400] font-bold"
+        className="mt-4 w-full bg-[#0DA64F] text-white py-3 px-4 rounded-md hover:bg-[#097d3a] font-bold"
       >
         Save Meal Plan
-      </button>
+      </Button>
     </div>
   );
 }

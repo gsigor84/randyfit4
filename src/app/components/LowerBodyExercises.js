@@ -89,19 +89,19 @@ export default function LowerBodyExercises({ clientId }) {
   };
 
   return (
-    <div className="bg-[#2B2B2B] p-6 rounded-lg shadow mb-8">
-      <h2 className="text-xl font-bold text-[#FFA800] mb-4">Lower Body Exercises</h2>
+    <div className="bg-white p-6 rounded-lg shadow-lg">
+      <h2 className="text-xl font-bold text-[#010326] mb-4">Lower Body Exercises</h2>
 
-      {/* Day of the week dropdown */}
+      {/* Day of the Week Dropdown */}
       <div className="mb-4">
-        <label htmlFor="day" className="text-gray-300">Select Day of the Week:</label>
+        <label htmlFor="day" className="text-gray-700 text-lg font-semibold">Select Day of the Week:</label>
         <select
           id="day"
           value={selectedDay}
           onChange={handleDayChange}
-          className="border border-gray-600 text-white bg-gray-800 rounded p-2 w-full focus:ring-2 focus:ring-[#FFA800]"
+          className="w-full bg-white text-black border border-gray-300 rounded-lg p-3 h-12"
         >
-          <option value="">--Select Day--</option>
+          <option value="">Select a Day</option>
           <option value="Monday">Monday</option>
           <option value="Tuesday">Tuesday</option>
           <option value="Wednesday">Wednesday</option>
@@ -112,55 +112,53 @@ export default function LowerBodyExercises({ clientId }) {
         </select>
       </div>
 
-      {/* Exercise selection */}
       {Object.entries(lowerBodyExercises).map(([muscleGroup, exercises]) => (
         <div key={muscleGroup} className="mb-6">
-          <h3 className="text-lg font-semibold text-[#FFA800] mb-2">{muscleGroup}</h3>
+          <h3 className="text-lg font-semibold text-[#F2B138] mb-2">{muscleGroup}</h3>
           <ul className="space-y-4">
             {exercises.map((exercise, index) => (
               <li key={index} className="flex flex-col space-y-2">
                 <div className="flex items-center space-x-4">
-                  {/* Checkbox to select exercise */}
                   <input
                     type="checkbox"
                     checked={!!selectedExercises[exercise]}
                     onChange={() => toggleExercise(exercise)}
-                    className="h-4 w-4 text-[#FFA800] focus:ring-[#FFA800] border-gray-300 rounded"
+                    className="w-5 h-5 text-[#07B0F2] focus:ring-[#07B0F2] border-gray-300 rounded"
                   />
-                  <span className="text-white font-medium">{exercise}</span>
+                  <span className="text-black font-medium">{exercise}</span>
                 </div>
 
                 {/* Input fields for reps, weight, and sets */}
                 {selectedExercises[exercise] && (
                   <div className="ml-8 grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div className="flex flex-col">
-                      <label className="block text-gray-300 text-sm mb-1">Reps</label>
+                      <label className="block text-gray-600 text-sm mb-1">Reps</label>
                       <input
                         type="number"
                         placeholder="Reps"
                         value={selectedExercises[exercise].reps}
                         onChange={(e) => handleInputChange(exercise, "reps", e.target.value)}
-                        className="border border-gray-600 text-white bg-gray-800 rounded p-2 w-full focus:ring-2 focus:ring-[#FFA800]"
+                        className="border border-gray-300 text-black bg-white rounded-lg p-3 w-full h-12"
                       />
                     </div>
                     <div className="flex flex-col">
-                      <label className="block text-gray-300 text-sm mb-1">Sets</label>
+                      <label className="block text-gray-600 text-sm mb-1">Sets</label>
                       <input
                         type="number"
                         placeholder="Sets"
                         value={selectedExercises[exercise].sets}
                         onChange={(e) => handleInputChange(exercise, "sets", e.target.value)}
-                        className="border border-gray-600 text-white bg-gray-800 rounded p-2 w-full focus:ring-2 focus:ring-[#FFA800]"
+                        className="border border-gray-300 text-black bg-white rounded-lg p-3 w-full h-12"
                       />
                     </div>
                     <div className="flex flex-col">
-                      <label className="block text-gray-300 text-sm mb-1">Weight (kg)</label>
+                      <label className="block text-gray-600 text-sm mb-1">Weight (kg)</label>
                       <input
                         type="number"
                         placeholder="Weight"
                         value={selectedExercises[exercise].weight}
                         onChange={(e) => handleInputChange(exercise, "weight", e.target.value)}
-                        className="border border-gray-600 text-white bg-gray-800 rounded p-2 w-full focus:ring-2 focus:ring-[#FFA800]"
+                        className="border border-gray-300 text-black bg-white rounded-lg p-3 w-full h-12"
                       />
                     </div>
                   </div>
@@ -170,14 +168,16 @@ export default function LowerBodyExercises({ clientId }) {
           </ul>
         </div>
       ))}
+
       {/* Submit Button */}
       <button
         onClick={handleSubmit}
         disabled={loading}
-        className={`mt-4 w-full bg-[#FFA800] text-black py-2 px-4 rounded hover:bg-[#cc8400] focus:ring-2 focus:ring-[#FFA800] transition-all ${loading && "opacity-50 cursor-not-allowed"}`}
+        className="mt-4 w-full bg-[#07B0F2] text-white py-3 px-4 rounded-lg hover:bg-[#005f99] focus:ring-2 focus:ring-[#07B0F2] transition-all"
       >
         {loading ? "Saving..." : "Save Exercises"}
       </button>
     </div>
+
   );
 }

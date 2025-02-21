@@ -42,11 +42,20 @@ export default function WorkoutPage() {
   }, [id]);
 
   if (loading) {
-    return <p className="text-white text-center p-4">Loading...</p>;
+    return (
+      <div className="max-w-4xl mx-auto mt-8 p-6 bg-white rounded-lg shadow border border-gray-300">
+        <h1 className="text-3xl font-semibold text-[#F2B138] mb-6">Loading...</h1>
+      </div>
+    );
   }
 
   if (!clientData) {
-    return <p className="text-white text-center p-4">No client data found.</p>;
+    return (
+      <div className="max-w-4xl mx-auto mt-8 p-6 bg-white rounded-lg shadow border border-gray-300">
+        <h1 className="text-3xl font-semibold text-red-500 mb-6">Error</h1>
+        <p className="text-red-500">No client data found.</p>
+      </div>
+    );
   }
 
   // Helper function to get the last workout for each day
@@ -68,7 +77,7 @@ export default function WorkoutPage() {
   const renderLastWorkoutForDay = (day, workout) => {
     if (!workout) {
       return (
-        <p className="text-sm text-gray-400 mb-4">
+        <p className="text-sm text-gray-500 mb-4">
           <strong>{day}:</strong> Off
         </p>
       );
@@ -76,37 +85,26 @@ export default function WorkoutPage() {
 
     return (
       <div key={day} className="mb-6">
-        <p className="text-sm text-gray-300 mb-2">
+        <p className="text-sm text-gray-700 mb-2">
           <strong>{day}:</strong>
         </p>
         <div className="overflow-x-auto">
-          <table className="table-auto w-full text-sm text-left border-collapse">
+          <table className="table-auto w-full text-sm text-left border-collapse border border-gray-300">
             <thead>
-              <tr className="bg-[#333] text-[#FFD700]">
-                <th className="px-2 sm:px-4 py-2">Exercise Name</th>
-                <th className="px-2 sm:px-4 py-2">Sets</th>
-                <th className="px-2 sm:px-4 py-2">Weight (kg)</th>
-                <th className="px-2 sm:px-4 py-2">Reps</th>
+              <tr className="bg-[#F2F2F2] text-[#010326]">
+                <th className="px-2 sm:px-4 py-2 border border-gray-300">Exercise</th>
+                <th className="px-2 sm:px-4 py-2 border border-gray-300">Sets</th>
+                <th className="px-2 sm:px-4 py-2 border border-gray-300">Weight (kg)</th>
+                <th className="px-2 sm:px-4 py-2 border border-gray-300">Reps</th>
               </tr>
             </thead>
             <tbody>
               {workout.exercises.map((exercise, index) => (
-                <tr
-                  key={index}
-                  className="odd:bg-[#444] even:bg-[#333] hover:bg-[#555]"
-                >
-                  <td className="px-2 sm:px-4 py-2 text-white">
-                    {exercise.name}
-                  </td>
-                  <td className="px-2 sm:px-4 py-2 text-white">
-                    {exercise.sets}
-                  </td>
-                  <td className="px-2 sm:px-4 py-2 text-white">
-                    {exercise.weight}
-                  </td>
-                  <td className="px-2 sm:px-4 py-2 text-white">
-                    {exercise.reps}
-                  </td>
+                <tr key={index} className="odd:bg-white even:bg-gray-100 hover:bg-gray-200">
+                  <td className="px-2 sm:px-4 py-2 text-gray-800">{exercise.name}</td>
+                  <td className="px-2 sm:px-4 py-2 text-gray-800">{exercise.sets}</td>
+                  <td className="px-2 sm:px-4 py-2 text-gray-800">{exercise.weight}</td>
+                  <td className="px-2 sm:px-4 py-2 text-gray-800">{exercise.reps}</td>
                 </tr>
               ))}
             </tbody>
@@ -117,17 +115,15 @@ export default function WorkoutPage() {
   };
 
   const renderCategory = (title, lastWorkoutsByDay) => (
-    <div className="bg-[#333] p-4 sm:p-6 rounded-md shadow-lg mb-8">
-      <h2 className="text-lg sm:text-2xl font-semibold text-[#FFD700] mb-4">
-        {title}
-      </h2>
+    <div className="bg-[#F2F2F2] p-6 rounded-lg shadow border border-gray-300 mb-8">
+      <h2 className="text-lg sm:text-2xl font-semibold text-[#010326] mb-4">{title}</h2>
       {daysOfWeek.map((day) => renderLastWorkoutForDay(day, lastWorkoutsByDay[day]))}
     </div>
   );
 
   return (
-    <div className="max-w-7xl mx-auto sm:p-8 ">
-      <h1 className="text-2xl sm:text-4xl font-bold text-[#FFD700] mb-6 text-center">
+    <div className="max-w-7xl mx-auto sm:p-8">
+      <h1 className="text-2xl sm:text-4xl font-bold text-[#010326] mb-6 text-center">
         Training Overview
       </h1>
 

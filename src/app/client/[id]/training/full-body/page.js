@@ -18,7 +18,7 @@ export default function TrainingPage() {
   }
 
   return (
-    <div className="max-w-7xl mx-auto mt-8 p-6 bg-[#1c1c1c] rounded-lg shadow">
+    <div className="max-w-7xl mx-auto mt-8 ">
       {/* Only the general page title */}
       <h1 className="text-3xl font-bold text-[#FFA800] mb-6">Training Overview</h1>
 

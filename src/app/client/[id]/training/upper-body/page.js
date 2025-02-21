@@ -11,18 +11,22 @@ export default function TrainingPage() {
 
   if (!clientId) {
     return (
-      <div className="max-w-7xl mx-auto mt-8 p-6 bg-[#1c1c1c] rounded-lg shadow">
-        <p className="text-red-500 text-lg font-semibold">Error: Client ID is missing in the URL!</p>
+      <div className="max-w-4xl mx-auto mt-8  bg-white rounded-lg shadow border border-gray-300">
+        <p className="text-red-500 text-lg font-semibold">
+          Error: Client ID is missing in the URL!
+        </p>
       </div>
     );
   }
 
   return (
-    <div className="max-w-7xl mx-auto mt-8 p-6 bg-[#1c1c1c] rounded-lg shadow">
-
+    <div className="max-w-4xl mx-auto mt-8">
+      <h1 className="text-3xl font-bold text-[#010326] mb-6">Upper Body Exercises</h1>
 
       {/* Upper Body Exercises Section */}
-      <UpperBodyExercises clientId={clientId} />
+      <div className="bg-[#F2F2F2] ">
+        <UpperBodyExercises clientId={clientId} />
+      </div>
     </div>
   );
 }

@@ -11,14 +11,14 @@ export default function AddLowerBodyPage() {
 
   if (!clientId) {
     return (
-      <div className="max-w-7xl mx-auto mt-8 p-6 bg-[#1c1c1c] rounded-lg shadow">
+      <div className="max-w-7xl mx-auto mt-8 ">
         <p className="text-red-500 text-lg font-semibold">Error: Client ID is missing in the URL!</p>
       </div>
     );
   }
 
   return (
-    <div className="max-w-7xl mx-auto mt-8 p-6 bg-[#1c1c1c] rounded-lg shadow">
+    <div className="max-w-7xl mx-auto mt-8 ">
 
       <LowerBodyExercises clientId={clientId} />
     </div>
