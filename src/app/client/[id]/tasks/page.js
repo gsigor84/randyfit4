@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { FaCalendarAlt } from "react-icons/fa";
+import { FaCalendarAlt, FaTrash } from "react-icons/fa";
+import { useClient } from "../ClientContext"; // Ensure correct path
 
 const taskOptions = [
   "Prepare new training programs",
@@ -17,47 +18,85 @@ const taskOptions = [
   "Create a fat-loss-focused HIIT routine",
 ];
 
-export default function Tasks({ clientId }) {
+export default function Tasks() {
+  const client = useClient();
+  const router = useRouter();
+
   const [selectedTask, setSelectedTask] = useState("");
   const [taskDate, setTaskDate] = useState("");
   const [priority, setPriority] = useState("High");
   const [tasks, setTasks] = useState([]);
-  const router = useRouter();
 
-  const handleAddTask = () => {
+  // Fetch tasks from API when component loads
+  useEffect(() => {
+    if (client) {
+      fetch(`/api/tasks?id=${client._id}`)
+        .then((res) => res.json())
+        .then((data) => setTasks(data))
+        .catch((err) => console.error("Error fetching tasks:", err));
+    }
+  }, [client]);
+
+  // Format date for display
+  const formatDate = (dateString) => {
+    if (!dateString) return "";
+    const options = { year: "numeric", month: "long", day: "numeric" };
+    return new Date(dateString).toLocaleDateString("en-US", options);
+  };
+
+  const handleAddTask = async () => {
     if (!selectedTask || !taskDate) {
       alert("Please select a task and a due date.");
       return;
     }
 
-    const newTask = {
-      id: Date.now(),
-      task: selectedTask,
-      date: taskDate,
-      priority,
-    };
+    const newTask = { task: selectedTask, date: taskDate, priority };
 
-    setTasks((prevTasks) => [...prevTasks, newTask]);
-    setSelectedTask(""); // Reset dropdown
-    setTaskDate(""); // Reset date input
-    setPriority("High"); // Reset priority
+    try {
+      const response = await fetch("/api/tasks", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: client._id, ...newTask }),
+      });
+
+      if (!response.ok) throw new Error("Failed to add task");
+
+      setTasks((prevTasks) => [...prevTasks, newTask]); // Update UI
+      setSelectedTask("");
+      setTaskDate("");
+      setPriority("High");
+    } catch (error) {
+      console.error("Error adding task:", error);
+    }
   };
 
-  const handleDeleteTask = (taskId) => {
-    setTasks((prevTasks) => prevTasks.filter((task) => task.id !== taskId));
+  const handleDeleteTask = async (taskToDelete) => {
+    try {
+      const response = await fetch("/api/tasks", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: client._id, task: taskToDelete }),
+      });
+
+      if (!response.ok) throw new Error("Failed to delete task");
+
+      setTasks((prevTasks) => prevTasks.filter((task) => task.task !== taskToDelete));
+    } catch (error) {
+      console.error("Error deleting task:", error);
+    }
   };
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-lg">
       <h2 className="text-xl font-bold text-[#010326] mb-4">Client Tasks</h2>
 
-      {/* Task Selection Dropdown */}
-      <div className="mb-4">
-        <label className="block text-gray-700 font-semibold">Select Task:</label>
+      {/* Task Selection */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+        {/* Task Dropdown */}
         <select
           value={selectedTask}
           onChange={(e) => setSelectedTask(e.target.value)}
-          className="w-full bg-white border border-gray-300 rounded-lg p-3 h-12"
+          className="w-full p-3 border border-gray-300 rounded-lg"
         >
           <option value="">Choose a task</option>
           {taskOptions.map((task, index) => (
@@ -66,29 +105,23 @@ export default function Tasks({ clientId }) {
             </option>
           ))}
         </select>
-      </div>
 
-      {/* Task Date */}
-      <div className="mb-4 flex flex-col">
-        <label className="block text-gray-700 font-semibold">Due Date:</label>
+        {/* Task Date */}
         <div className="relative">
           <input
             type="date"
             value={taskDate}
             onChange={(e) => setTaskDate(e.target.value)}
-            className="w-full bg-white border border-gray-300 rounded-lg p-3 h-12"
+            className="w-full p-3 border border-gray-300 rounded-lg"
           />
           <FaCalendarAlt className="absolute right-3 top-4 text-gray-500" />
         </div>
-      </div>
 
-      {/* Task Priority */}
-      <div className="mb-4">
-        <label className="block text-gray-700 font-semibold">Priority:</label>
+        {/* Task Priority */}
         <select
           value={priority}
           onChange={(e) => setPriority(e.target.value)}
-          className="w-full bg-white border border-gray-300 rounded-lg p-3 h-12"
+          className="w-full p-3 border border-gray-300 rounded-lg"
         >
           <option value="High">High</option>
           <option value="Medium">Medium</option>
@@ -99,7 +132,7 @@ export default function Tasks({ clientId }) {
       {/* Add Task Button */}
       <button
         onClick={handleAddTask}
-        className="w-full bg-[#07B0F2] text-white py-3 px-4 rounded-lg hover:bg-[#005f99] transition-all"
+        className="w-full bg-[#07B0F2] text-white py-3 rounded-lg hover:bg-[#005f99] transition-all"
       >
         Add Task
       </button>
@@ -108,23 +141,33 @@ export default function Tasks({ clientId }) {
       <div className="mt-6">
         {tasks.length > 0 ? (
           <ul className="space-y-3">
-            {tasks.map((task) => (
+            {tasks.map((task, index) => (
               <li
-                key={task.id}
-                className="flex justify-between items-center p-4 bg-gray-100 rounded-lg"
+                key={index}
+                className="flex justify-between items-center p-4 bg-gray-100 rounded-lg shadow-md"
               >
                 <div>
                   <p className="font-semibold text-[#010326]">{task.task}</p>
                   <p className="text-gray-600 text-sm">
-                    Due: {task.date} | Priority:{" "}
-                    <span className="font-semibold text-[#F25922]">{task.priority}</span>
+                    <span className="font-semibold text-[#07B0F2]">{formatDate(task.date)}</span> |
+                    Priority:{" "}
+                    <span
+                      className={`font-semibold ${task.priority === "High"
+                          ? "text-red-500"
+                          : task.priority === "Medium"
+                            ? "text-orange-500"
+                            : "text-green-500"
+                        }`}
+                    >
+                      {task.priority}
+                    </span>
                   </p>
                 </div>
                 <button
-                  onClick={() => handleDeleteTask(task.id)}
-                  className="bg-red-500 text-white px-3 py-1 rounded-lg hover:bg-red-700"
+                  onClick={() => handleDeleteTask(task.task)}
+                  className="bg-red-500 text-white px-3 py-1 rounded-lg hover:bg-red-700 flex items-center gap-2"
                 >
-                  Delete
+                  <FaTrash />
                 </button>
               </li>
             ))}
